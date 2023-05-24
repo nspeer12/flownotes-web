@@ -44,7 +44,7 @@ export default {
   },
   data() {
     return {
-      userid: String('1'),
+      userid: String(''),
       notes: Array(),
       taglist: Array(),
       query: String(),
@@ -286,7 +286,7 @@ export default {
       
 
 
-    if (this.userid) {
+    if (this.userid != '') {
       // get the notes
       await this.getNotes(this.userid);
     }

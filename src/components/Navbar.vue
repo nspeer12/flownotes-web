@@ -5,17 +5,25 @@
       <div class="d-flex align-items-center">
 
         <div class="row">
-          <div class="col-lg-5 col-4">
+          <div class="col-5">
             <input v-model="query" class="form-control me-2 search-button" id="search" type="search" placeholder="" />
 
           </div>
-          <div class="col-3">
+          <div class="col-2">
             <button @click="search" class="btn btn-outline-success" type="button">Search</button>
           </div>
           <div class="col-2">
+            
             <div v-if="!isAuthenticated()" class="d-flex align-items-center">
               <button @click="showPopup = true" class="btn btn-primary" type="button">Login</button>
             </div>
+          </div>
+
+          <div class="col-3">
+            <div v-if="!isAuthenticated()" class="d-flex align-items-center">
+              <button @click="showPopup = true" class="btn btn-success" type="button">Sign Up</button>
+            </div>
+
             <div v-else class="d-flex align-items-center">
               <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
