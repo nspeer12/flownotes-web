@@ -8,10 +8,10 @@
       @logout="handleLogout" />
     <div class="pt-5">
       <div class="row">
-        <div class="col-2">
+        <div class="col-1">
           <Sidebar v-on:pins="getPins" @getTagNotes="getTagNotes" :taglist="taglist" />
         </div>
-        <div class="col-8">
+        <div class="col-11">
           <div class="mx-5 pt-3">
             <Compose v-on:note-saved="saveNote" :userid="userid" :apiUrl="apiUrl" />
             <Notes @pin-note="pinNote" @delete-note="deleteNote" @getTagNotes="getTagNotes" :notes="notes" />

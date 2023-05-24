@@ -1,6 +1,6 @@
 <template>
-  <div class="compose card bg-dark my-2 px-3 py-2">
-    <div class="compose-box">
+  <div class="compose card bg-dark my-2 px-3 py-2" :class="{ 'full-width': !fullWidth }">
+    <div class="compose-box" >
       <div id="markdown">
       </div>
       <textarea v-bind:rows="rows" v-on:input="updateData" v-on:keyup.shift.enter="saveMessage" id="compose-input"
@@ -16,6 +16,11 @@
 
     <div class="actions">
 
+      <button type="button" class="btn btn-secondary btn-sm mx-1" @click="toggleWidth">
+        <i :class="fullWidth ? 'bi bi-arrow-bar-right' : 'bi bi-arrow-bar-left'"></i>
+      </button>
+
+
       <button type="button" class="btn btn-secondary btn-sm mx-1" @click="decreaseFontSize"><i
           class="bi bi-fonts">-</i></button>
 
@@ -28,7 +33,7 @@
         <i class="bi bi-mic"></i>
       </button>
 
-      
+
       <button type="button" class="btn btn-success btn-sm mx-1" @click="playAudio">
         <i class="bi bi-play-circle"></i>
       </button>
@@ -70,6 +75,7 @@ export default {
       audioUrl: null,
       audioChunks: [],
       fontSize: '1em',
+      fullWidth: false,
     }
   },
   props: {
@@ -259,6 +265,9 @@ export default {
       if (currentSize > 0.1) {
         this.fontSize = (currentSize - 0.1) + 'em';
       }
+    },
+    toggleWidth() {
+      this.fullWidth = !this.fullWidth;
     }
   }
 }
@@ -284,4 +293,16 @@ export default {
 .recording {
   background-color: red;
 }
+
+.compose {
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.full-width {
+  max-width: none;
+  width: 80%;
+}
+
+
 </style>
