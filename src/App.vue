@@ -48,7 +48,7 @@ export default {
       notes: Array(),
       taglist: Array(),
       query: String(),
-      apiUrl: 'http://localhost:5001',
+      apiUrl: 'http://localhost:8000',
       token: null,
     }
   },
