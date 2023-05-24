@@ -11,7 +11,7 @@
         <div class="col-2">
           <Sidebar v-on:pins="getPins" @getTagNotes="getTagNotes" :taglist="taglist" />
         </div>
-        <div class="col-10">
+        <div class="col-8">
           <div class="mx-5 pt-3">
             <Compose v-on:note-saved="saveNote" :userid="userid" :apiUrl="apiUrl" />
             <Notes @pin-note="pinNote" @delete-note="deleteNote" @getTagNotes="getTagNotes" :notes="notes" />

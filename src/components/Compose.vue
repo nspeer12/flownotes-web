@@ -3,14 +3,8 @@
     <div class="compose-box">
       <div id="markdown">
       </div>
-      <textarea 
-        v-bind:rows="rows" 
-        v-on:input="updateData"
-        v-on:keyup.shift.enter="saveMessage" 
-        id="compose-input" 
-        class="compose-input bg-dark"
-        placeholder="What's on your mind?"
-      ></textarea>
+      <textarea v-bind:rows="rows" v-on:input="updateData" v-on:keyup.shift.enter="saveMessage" id="compose-input"
+        class="compose-input bg-dark" placeholder="What's on your mind?" :style="{ fontSize: fontSize }"></textarea>
 
 
     </div>
@@ -21,24 +15,34 @@
     </div>
 
     <div class="actions">
-      <button type="button" class="btn btn-secondary btn-sm mx-1"
+
+      <button type="button" class="btn btn-secondary btn-sm mx-1" @click="decreaseFontSize"><i
+          class="bi bi-fonts">-</i></button>
+
+      <button type="button" class="btn btn-secondary btn-sm mx-1" @click="increaseFontSize"><i
+          class="bi bi-fonts">+</i></button>
+
+
+      <button type="button" class="btn btn-danger btn-sm mx-1"
         :class="{ 'recording': isRecording, 'not-recording': !isRecording }" @click="toggleRecording">
         <i class="bi bi-mic"></i>
       </button>
 
-      <button type="button" class="btn btn-secondary btn-sm mx-1" @click="playAudio">
+      
+      <button type="button" class="btn btn-success btn-sm mx-1" @click="playAudio">
         <i class="bi bi-play-circle"></i>
       </button>
-
 
       <!-- <button type="button" class="btn btn-secondary btn-sm mx-1"><i class="bi bi-image"></i></button>
 
             <button type="button" class="btn btn-secondary btn-sm mx-1" v-on:click="dalle" ><i class="bi bi-palette"></i></button> -->
 
-      <button type="button" class="btn btn-secondary btn-sm mx-1" @click="convertMarkdown"><i
+      <button type="button" class="btn btn-light btn-sm mx-1" @click="convertMarkdown"><i
           class="bi bi-file-earmark-font"></i></button>
-      <button type="button" class="btn btn-secondary btn-sm mx-2"><i class="bi bi-chat-right-dots"
+
+      <button type="button" class="btn btn-info btn-sm mx-2"><i class="bi bi-chat-right-dots"
           v-on:click="gptComplete"></i></button>
+
       <button id="save" type="button" class="btn btn-primary btn-sm mx-1" v-on:click="saveMessage"><i
           class="bi bi-sd-card"></i>
       </button>
@@ -65,6 +69,7 @@ export default {
       mediaRecorder: null,
       audioUrl: null,
       audioChunks: [],
+      fontSize: '1em',
     }
   },
   props: {
@@ -197,24 +202,24 @@ export default {
       }
 
       navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(stream => {
-      this.mediaRecorder = new MediaRecorder(stream);
-      
-      const audioChunks = []; // Declare audioChunks array here
-      this.mediaRecorder.addEventListener("dataavailable", event => {
-        this.audioChunks.push(event.data);
-      });
+        .then(stream => {
+          this.mediaRecorder = new MediaRecorder(stream);
 
-      this.mediaRecorder.addEventListener("stop", () => {
-        const audioBlob = new Blob(audioChunks);
-        const audioUrl = URL.createObjectURL(audioBlob);
-        this.audioUrl = audioUrl; // Save the audio URL
-      });
+          const audioChunks = []; // Declare audioChunks array here
+          this.mediaRecorder.addEventListener("dataavailable", event => {
+            this.audioChunks.push(event.data);
+          });
 
-      this.mediaRecorder.start();
-      this.isRecording = true;
-    })
-    .catch(err => console.error(err));
+          this.mediaRecorder.addEventListener("stop", () => {
+            const audioBlob = new Blob(audioChunks);
+            const audioUrl = URL.createObjectURL(audioBlob);
+            this.audioUrl = audioUrl; // Save the audio URL
+          });
+
+          this.mediaRecorder.start();
+          this.isRecording = true;
+        })
+        .catch(err => console.error(err));
     },
     stopRecording() {
       if (!this.mediaRecorder) {
@@ -240,10 +245,20 @@ export default {
       }
     },
     playAudio() {
-    if (this.audioUrl) {
-      const audio = new Audio(this.audioUrl);
-      audio.play();
-    }
+      if (this.audioUrl) {
+        const audio = new Audio(this.audioUrl);
+        audio.play();
+      }
+    },
+    increaseFontSize() {
+      let currentSize = parseFloat(this.fontSize);
+      this.fontSize = (currentSize + 0.1) + 'em';
+    },
+    decreaseFontSize() {
+      let currentSize = parseFloat(this.fontSize);
+      if (currentSize > 0.1) {
+        this.fontSize = (currentSize - 0.1) + 'em';
+      }
     }
   }
 }
