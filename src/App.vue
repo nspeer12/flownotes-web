@@ -48,7 +48,7 @@ export default {
       notes: Array(),
       taglist: Array(),
       query: String(),
-      apiUrl: 'http://localhost:8000',
+      apiUrl: 'https://flownotesapi.speer.ai',
       token: null,
     }
   },
