@@ -15,13 +15,13 @@
           <div class="col-2">
             
             <div v-if="!isAuthenticated()" class="d-flex align-items-center">
-              <button @click="showPopup = true" class="btn btn-primary" type="button">Login</button>
+              <button @click="showPopup=true" class="btn btn-primary" type="button">Login</button>
             </div>
           </div>
 
           <div class="col-3">
             <div v-if="!isAuthenticated()" class="d-flex align-items-center">
-              <button @click="showPopup = true" class="btn btn-success" type="button">Sign Up</button>
+              <button @click="showPopup=true" class="btn btn-success" type="button">Sign Up</button>
             </div>
 
             <div v-else class="d-flex align-items-center">
@@ -60,11 +60,11 @@ export default {
   },
   data() {
     return {
-      query: '',
-      showPopup: false,
-      email: '',
-      password: '',
-      username: '',
+      query: String(),
+      showPopup: Boolean(),
+      email: String(),
+      password: String(),
+      username: String(),
       apiUrl: String()
     };
   },
@@ -73,7 +73,6 @@ export default {
       this.$emit('search', this.query);
     },
     isAuthenticated() {
-      // Check if the user is authenticated based on your authentication logic
       return !!localStorage.getItem('token');
     },
     async handleLogin(email, password) {
