@@ -136,4 +136,11 @@ export default {
     color: #fff;
 }
 
+
+.full-width {
+  max-width: none;
+  width: 80%;
+}
+
+
 </style>

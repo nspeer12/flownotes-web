@@ -55,7 +55,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Flownotes'
+      default: 'Flownotes.ai'
     }
   },
   data() {
@@ -82,7 +82,6 @@ export default {
       this.email = email;
       this.password = password;
 
-      // emit the login event
       this.$emit('login', email, password);
     },
     handleLogout() {

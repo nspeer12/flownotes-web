@@ -16,10 +16,9 @@
 
     <div class="actions">
 
-      <button type="button" class="btn btn-secondary btn-sm mx-1" @click="toggleWidth">
-        <i :class="fullWidth ? 'bi bi-arrow-bar-right' : 'bi bi-arrow-bar-left'"></i>
-      </button>
-
+      <button type="button" class="btn btn-secondary btn-sm mx-1" @click="toggleWidthHandler">
+            <i :class="fullWidth ? 'bi bi-arrow-bar-right' : 'bi bi-arrow-bar-left'"></i>
+          </button>
 
       <button type="button" class="btn btn-secondary btn-sm mx-1" @click="decreaseFontSize"><i
           class="bi bi-fonts">-</i></button>
@@ -75,13 +74,13 @@ export default {
       audioUrl: null,
       audioChunks: [],
       fontSize: '1em',
-      fullWidth: false,
     }
   },
   props: {
     userid: {
       type: String,
     },
+    fullWidth: Boolean(),
     apiUrl: {
       type: String,
     },
@@ -106,14 +105,16 @@ export default {
         markdown: this.markdown,
         imageUrl: this.imageUrl
       }
-
-      this.$emit('note-saved', newNote)
+      this.$emit('note-saved', newNote);
 
       this.message = String('')
       this.imageUrl = String('')
       this.markdown = String('')
       document.getElementById('compose-input').value = ''
 
+    },
+    toggleWidthHandler() {
+      this.$emit('toggleWidth');
     },
     gptComplete() {
       console.log('gpt_complete', this.message)
@@ -265,9 +266,6 @@ export default {
       if (currentSize > 0.1) {
         this.fontSize = (currentSize - 0.1) + 'em';
       }
-    },
-    toggleWidth() {
-      this.fullWidth = !this.fullWidth;
     }
   }
 }

@@ -4,8 +4,9 @@
 
 <template>
   <div class="">
-    <Navbar class="mb-5" :query="query" v-on:search="searchNotes" :apiUrl="apiUrl" @user-logged-in="handleUserLoggedIn"
+    <Navbar class="mb-5" :query="query" v-on:search="searchNotes" :apiUrl="apiUrl" @login="handleLogin" @user-logged-in="handleUserLoggedIn"
       @logout="handleLogout" />
+      
     <div class="pt-5">
       <div class="row">
         <div class="col-1">
@@ -13,8 +14,8 @@
         </div>
         <div class="col-11">
           <div class="mx-5 pt-3">
-            <Compose v-on:note-saved="saveNote" :userid="userid" :apiUrl="apiUrl" />
-            <Notes @pin-note="pinNote" @delete-note="deleteNote" @getTagNotes="getTagNotes" :notes="notes" />
+            <Compose v-on:note-saved="saveNote" :userid="userid" :apiUrl="apiUrl" :fullWidth="fullWidth" @toggleWidth="toggleWidth" />
+            <Notes @pin-note="pinNote" @delete-note="deleteNote" @getTagNotes="getTagNotes" :notes="notes" :fullWidth="fullWidth" />
           </div>
         </div>
       </div>
@@ -50,30 +51,37 @@ export default {
       query: String(),
       apiUrl: 'https://flownotesapi.speer.ai',
       token: null,
+      fullWidth: false,
     }
   },
   methods: {
-    async login(email, password) {
+    async handleLogin(email, password) {
 
-      console.log('login', email);
+      console.log('App login', email);
 
       const reqUrl = `${this.apiUrl}/login`;
 
-      user = {
-        email: email,
-        password: password
+      const user = {
+        "email": email,
+        "password": password
       }
       
+      this.email = email;
+
       try {
         const res = await fetch(reqUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
           },
           body: JSON.stringify(user),
         });
 
         if (res.ok) {
+          
+          console.log(res);
+
           const { userid, token } = await res.json();
 
           // Store the token in session storage
@@ -127,7 +135,7 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Allow-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify(req)
       }).then(res => res.json())
@@ -196,16 +204,17 @@ export default {
           'Allow-Control-Allow-Origin': '*'
         }
       })
-      const data = await res.json()
-      console.log('getpins', data)
+      const data = await res.json();
+      console.log('getpins', data);
 
-      this.notes = Array.from(data.notes)
+      this.notes = Array.from(data.notes);
     },
 
     saveNote(newNote) {
 
-      const reqUrl = `${this.apiUrl}/compose`
-      const data = newNote
+      const reqUrl = `${this.apiUrl}/compose`;
+      const data = newNote;
+      this.notes.push(newNote);
 
       fetch(reqUrl, {
         method: 'POST',
@@ -216,10 +225,10 @@ export default {
         body: JSON.stringify(data)
       }).then(res => res.json())
         .then(data => {
-          this.getNotes(this.userid)
+          this.getNotes(this.userid);
 
           // reset the message
-          this.message = ''
+          this.message = '';
         })
     },
 
@@ -271,6 +280,9 @@ export default {
       // TODO: recorder.js
 
       // recorder = new Recorder(source, [,config])
+    },
+    toggleWidth() {
+      this.fullWidth = !this.fullWidth;
     }
   },
 
@@ -296,6 +308,9 @@ export default {
     userid: function (newUserid, oldUserid) {
       console.log('userid changed', newUserid, oldUserid)
       this.getNotes(newUserid);
+    },
+    fullWidth: function (oldToggle, newToggle) {
+      console.log('width changed: ', oldToggle, newToggle);
     }
   }
 }

@@ -25,7 +25,7 @@
     },
     methods: {
       login(email, password) {
-        console.log(`email ${email} password ${password}`)
+        console.log(`login ${email}`)
         this.$emit('login', email, password);
       }
     }
