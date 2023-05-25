@@ -74,7 +74,7 @@ export default {
     },
     isAuthenticated() {
       // Check if the user is authenticated based on your authentication logic
-      return !!localStorage.getItem('token') && !!this.username;
+      return !!localStorage.getItem('token');
     },
     async handleLogin(email, password) {
       console.log(`email ${email} password ${password}`);
