@@ -205,7 +205,7 @@ export default {
 
       this.notes = Array.from(data.notes);
     },
-    
+
     async saveNote(newNote) {
       const reqUrl = `${this.apiUrl}/compose`;
 
@@ -303,7 +303,7 @@ export default {
   watch: {
     userid: function (newUserid, oldUserid) {
       console.log('userid changed', newUserid);
-      this.getNotes(newUserid);
+      // this.getNotes(newUserid);
     },
     fullWidth: function (oldToggle, newToggle) {
       console.log('width changed: ', oldToggle, newToggle);

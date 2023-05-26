@@ -27,8 +27,8 @@ export default {
     },
     methods: {
         getTags(tag) {
-            console.log('getTagNotes', tag)
-            this.$emit('getTagNotes', tag)
+            console.log('getTagNotes', tag);
+            this.$emit('getTagNotes', tag);
         }
     }
 }
