@@ -53,6 +53,7 @@ export default {
       apiUrl: 'https://flownotesapi.speer.ai',
       token: null,
       fullWidth: false,
+
     }
   },
   methods: {
@@ -291,9 +292,7 @@ export default {
     {
       this.token = localStorage.getItem("token");
     }
-      
-
-
+    
     if (this.userid != '') {
       // get the notes
       await this.getNotes(this.userid);

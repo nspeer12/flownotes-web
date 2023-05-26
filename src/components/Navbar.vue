@@ -73,6 +73,7 @@ export default {
       this.$emit('search', this.query);
     },
     isAuthenticated() {
+      // call an emit to getAuthenticationStatus
       return !!localStorage.getItem('token');
     },
     async handleLogin(email, password) {
@@ -93,6 +94,13 @@ export default {
   },
   components: {
     LoginPopup
+  },
+  watch: {
+    username: function (newUsername, oldUsername) {
+      console.log('username changed', newUsername);
+      this.showPopup = false;
+      // this.getNotes(newUserid);
+    },
   }
 };
 </script>
