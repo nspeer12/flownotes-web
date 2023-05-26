@@ -100,7 +100,7 @@ export default {
       console.log('username changed', newUsername);
       this.showPopup = false;
       // this.getNotes(newUserid);
-    },
+    }
   }
 };
 </script>
