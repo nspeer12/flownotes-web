@@ -119,30 +119,29 @@ export default {
       this.username = '';
       localStorage.removeItem('token');
     },
-    deleteNote(noteid) {
-      console.log('deleteNote', noteid)
 
+    async deleteNote(noteid) {
       const reqUrl = `${this.apiUrl}/delete`
 
-      // encode the noteid and userid as body parameters
       const req = {
         noteid: noteid,
         userid: this.userid
       }
 
-      // use the fetch function to make a json request
-      fetch(reqUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify(req)
-      }).then(res => res.json())
-        .then(data => {
-          console.log(data)
-          this.getNotes(this.userid)
-        })
+      try {
+        const res = await axios.post(reqUrl, req, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+
+        const data = res.data;
+
+        this.getNotes(this.userid)
+      } catch (error) {
+        console.log('Delete note error:', error);
+      }
     },
 
     pinNote(noteid, pinbool) {
@@ -169,28 +168,25 @@ export default {
     },
 
     async getNotes(userid) {
-
       const reqUrl = `${this.apiUrl}/notes/${userid}`
-      // use the fetch function to make a json request
-      const res = await fetch(reqUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      })
 
-      // convert the response to json
-      const data = await res.json()
+      try {
+        const res = await axios.get(reqUrl, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
 
-      console.log('getnotes', data)
-      this.notes = Array.from(data.notes)
-      this.taglist = data.taglist
-      console.log('getnotes', this.taglist)
-      // return the data
-      return data
+        const data = res.data;
 
+        this.notes = Array.from(data.notes)
+        this.taglist = data.taglist
+      } catch (error) {
+        console.log('Get notes error:', error);
+      }
     },
+
     async getPins() {
 
       console.log('getPins', this.userid)
@@ -209,27 +205,27 @@ export default {
 
       this.notes = Array.from(data.notes);
     },
-
-    saveNote(newNote) {
-
+    
+    async saveNote(newNote) {
       const reqUrl = `${this.apiUrl}/compose`;
-      const data = newNote;
+
       this.notes.push(newNote);
 
-      fetch(reqUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Allow-Control-Allow-Origin': '*'
-        },
-        body: JSON.stringify(data)
-      }).then(res => res.json())
-        .then(data => {
-          this.getNotes(this.userid);
+      try {
+        const res = await axios.post(reqUrl, newNote, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
 
-          // reset the message
-          this.message = '';
-        })
+        const data = res.data;
+
+        this.getNotes(this.userid);
+        this.message = '';
+      } catch (error) {
+        console.log('Save note error:', error);
+      }
     },
 
     searchNotes(query) {
@@ -306,7 +302,7 @@ export default {
   },
   watch: {
     userid: function (newUserid, oldUserid) {
-      console.log('userid changed', newUserid, oldUserid)
+      console.log('userid changed', newUserid);
       this.getNotes(newUserid);
     },
     fullWidth: function (oldToggle, newToggle) {
