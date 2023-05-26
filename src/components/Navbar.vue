@@ -97,7 +97,7 @@ export default {
   },
   watch: {
     showPopup: function (oldPop, newPop) {
-      console.log('popup changed', new);
+      console.log('popup changed', newPop);
     }
   }
 };
