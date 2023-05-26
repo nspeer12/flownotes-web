@@ -8,8 +8,6 @@
       <div>
           <input v-model="password" type="password" placeholder="Password" />
       </div>
-      
-     
       <button @click="login(email, password)">Login</button>
     </div>
   </div>

@@ -5,9 +5,8 @@
 <template>
   <div class="">
     <Navbar class="mb-5" :query="query" v-on:search="searchNotes" :apiUrl="apiUrl" @login="handleLogin" @user-logged-in="handleUserLoggedIn"
-      @logout="handleLogout" />
+      @logout="handleLogout" :showPopup="showPopup" />
     <div class="pt-5">
-      
       <div class="row">
         <div class="col-1">
           <Sidebar v-on:pins="getPins" @getTagNotes="getTagNotes" :taglist="taglist" />
@@ -53,6 +52,7 @@ export default {
       apiUrl: 'https://flownotesapi.speer.ai',
       token: null,
       fullWidth: false,
+      showPopup: false,
 
     }
   },
@@ -92,6 +92,8 @@ export default {
           // Proceed with other actions or redirects after successful login
           axios.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
 
+          this.showPopup = false;
+          
         } else {
           console.log('Login failed');
           // Handle the failed login scenario (e.g., display an error message to the user)
@@ -292,7 +294,7 @@ export default {
     {
       this.token = localStorage.getItem("token");
     }
-    
+
     if (this.userid != '') {
       // get the notes
       await this.getNotes(this.userid);

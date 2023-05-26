@@ -96,10 +96,8 @@ export default {
     LoginPopup
   },
   watch: {
-    username: function (newUsername, oldUsername) {
-      console.log('username changed', newUsername);
-      this.showPopup = false;
-      // this.getNotes(newUserid);
+    showPopup: function (oldPop, newPop) {
+      console.log('popup changed', new);
     }
   }
 };
