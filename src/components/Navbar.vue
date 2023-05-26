@@ -56,12 +56,15 @@ export default {
     title: {
       type: String,
       default: 'Flownotes.ai'
+    },
+    showPopup: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       query: String(),
-      showPopup: Boolean(),
       email: String(),
       password: String(),
       username: String(),
