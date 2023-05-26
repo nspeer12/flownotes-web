@@ -6,8 +6,8 @@
   <div class="">
     <Navbar class="mb-5" :query="query" v-on:search="searchNotes" :apiUrl="apiUrl" @login="handleLogin" @user-logged-in="handleUserLoggedIn"
       @logout="handleLogout" />
-      
     <div class="pt-5">
+      
       <div class="row">
         <div class="col-1">
           <Sidebar v-on:pins="getPins" @getTagNotes="getTagNotes" :taglist="taglist" />
@@ -32,6 +32,7 @@ import Navbar from './components/Navbar.vue'
 import Tagbar from './components/Tagbar.vue'
 import Sidebar from './components/Sidebar.vue'
 import Compose from './components/Compose.vue'
+import axios from 'axios';
 
 export default {
   name: 'App',
@@ -56,7 +57,6 @@ export default {
   },
   methods: {
     async handleLogin(email, password) {
-
       console.log('App login', email);
 
       const reqUrl = `${this.apiUrl}/login`;
@@ -69,20 +69,18 @@ export default {
       this.email = email;
 
       try {
-        const res = await fetch(reqUrl, {
-          method: 'POST',
+        const res = await axios.post(reqUrl, user, {
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
-          },
-          body: JSON.stringify(user),
+          }
         });
 
-        if (res.ok) {
+        if (res.status === 200) {
           
           console.log(res);
 
-          const { userid, token } = await res.json();
+          const { userid, token } = res.data;
 
           // Store the token in session storage
           sessionStorage.setItem('token', token);
@@ -91,6 +89,8 @@ export default {
           this.userid = userid;
 
           // Proceed with other actions or redirects after successful login
+          axios.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
+
         } else {
           console.log('Login failed');
           // Handle the failed login scenario (e.g., display an error message to the user)
