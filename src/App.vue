@@ -93,7 +93,7 @@ export default {
           axios.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
 
           this.showPopup = false;
-          
+
         } else {
           console.log('Login failed');
           // Handle the failed login scenario (e.g., display an error message to the user)
@@ -303,6 +303,7 @@ export default {
   },
   watch: {
     userid: function (newUserid, oldUserid) {
+      this.showPopup = false;
       console.log('userid changed', newUserid);
       // this.getNotes(newUserid);
     },
