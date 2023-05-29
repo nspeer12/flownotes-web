@@ -1,69 +1,85 @@
 <template>
-  <div class="signup">
-    <div class="signup-content">
-      <h2>Sign Up</h2>
-      <div>
-        <input type="text" id="username" v-model="username" placeholder="Username" required>
+    <div class="signup">
+      <div class="signup-content">
+        <h2>Welcome to Flownotes</h2>
+        <div>
+          <input v-model="email" type="email" placeholder="Email" />
+        </div>
+        <div>
+          <input v-model="password" type="password" placeholder="Password" />
+        </div>
+        <div>
+          <input v-model="confirmPassword" type="password" placeholder="Confirm Password" />
+        </div>
+        <button @click="signup">Sign Up</button>
       </div>
-      <div>
-        <input type="email" id="email" v-model="email" placeholder="Email" required>
-      </div>
-      <div>
-        <input type="password" id="password" v-model="password" placeholder="Password" required>
-      </div>
-      <button type="submit" @click="submitForm">Sign Up</button>
     </div>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      email: '',
-      password: '',
-    };
-  },
-  methods: {
-    submitForm() {
-      this.$emit('signup', { 
-        username: this.username, 
-        email: this.email, 
-        password: this.password
-      });
+  </template>
+  
+  <script>
+  export default {
+    data() {
+      return {
+        email: '',
+        password: '',
+        confirmPassword: '',
+      };
     },
-  },
-};
-</script>
+    methods: {
+      signup() {
+        if(this.password === this.confirmPassword) {
+          console.log(`signup ${this.email}`)
+          this.$emit('signup', this.email, this.password);
+        } else {
+          console.log('Passwords do not match!');
+        }
+      }
+    }
+  };
+  </script>
   
   <style scoped>
   .signup {
-    width: 300px;
-    margin: 0 auto;
-  }
-  
-  .form-group {
-    margin-bottom: 1em;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 0.5em;
-  }
-  
-  input {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    padding: 0.5em;
-    margin-bottom: 0.5em;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   
-  button {
-    padding: 0.5em 1em;
-    background-color: #007BFF;
-    color: white;
+  .signup-content {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 5px;
+    color: #fff;
+  }
+  
+  .signup-content h2 {
+    color: #fff;
+  }
+  
+  .signup-content input {
+    background-color: #444;
+    color: #fff;
     border: none;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .signup-content button {
+    background-color: #555;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
     cursor: pointer;
+  }
+  
+  .signup-content button:hover {
+    background-color: #666;
   }
   </style>
   

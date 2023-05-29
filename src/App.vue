@@ -107,6 +107,8 @@ export default {
       // const reqUrl = `${this.apiUrl}/notes/${userid}`;
       const reqUrl = `https://flownotesapi.speer.ai/notes/${userid}`;
 
+      console.log(reqUrl);
+
       try {
         const res = await axios.get(reqUrl, {
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
@@ -158,7 +160,7 @@ export default {
           this.taglist = data.taglist;
         });
     },
-    getTagNotes(tag) {
+    async getTagNotes(tag) {
       const reqUrl = `${this.apiUrl}/notes/${this.userid}/hashtag/${tag}`;
 
       fetch(reqUrl, {
