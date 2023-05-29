@@ -97,14 +97,14 @@ export default {
 
       fetch(reqUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Allow-Control-Allow-Origin': '*' }
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
       }).then(res => res.json())
         .then(data => { console.log(data); });
     },
     async getNotes(userid) {
       // const reqUrl = `${this.apiUrl}/notes/${userid}`;
       const reqUrl = `https://flownotesapi.speer.ai/notes/${userid}`;
-      
+
       try {
         const res = await axios.get(reqUrl, {
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
@@ -121,7 +121,7 @@ export default {
 
       const res = await fetch(reqUrl, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Allow-Control-Allow-Origin': '*' }
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
       });
       const data = await res.json();
       console.log('getpins', data);
@@ -135,7 +135,7 @@ export default {
 
       try {
         await axios.post(reqUrl, newNote, {
-          headers: { 'Content-Type': 'application/json', 'Allow-Control-Allow-Origin': '*' }
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
         });
 
         this.getNotes(this.userid);
@@ -149,7 +149,7 @@ export default {
 
       fetch(reqUrl, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Allow-Control-Allow-Origin': '*' }
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
       }).then(res => res.json())
         .then(data => {
           this.notes = data.notes;
@@ -161,7 +161,7 @@ export default {
 
       fetch(reqUrl, {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Allow-Control-Allow-Origin': '*' }
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
       }).then(res => res.json())
         .then(data => {
           this.notes = data.notes;
