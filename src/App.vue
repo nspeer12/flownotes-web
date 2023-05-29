@@ -59,6 +59,7 @@ export default {
           this.userid = userid;
           axios.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
           this.$router.push({ name: 'Notebook' });
+
         } else {
           console.log('Login failed');
         }
