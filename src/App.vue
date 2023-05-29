@@ -105,8 +105,9 @@ export default {
     },
     async getNotes() {
       console.log('Get Notes');
+
+      let reqUrl = `${this.apiUrl}/notes/${this.userid}`
       
-      const reqUrl = `${this.apiUrl}/notes/${this.userid}`
       try {
         const response = await fetch(reqUrl, {
           method: 'GET',
