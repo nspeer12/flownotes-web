@@ -3,43 +3,18 @@
     <div class="container-fluid">
       <a class="navbar-brand">{{ title }}</a>
       <div class="d-flex align-items-center">
-
         <div class="row">
           <div class="col-5">
             <input v-model="query" class="form-control me-2 search-button" id="search" type="search" placeholder="" />
-
           </div>
           <div class="col-2">
             <button @click="search" class="btn btn-outline-success" type="button">Search</button>
           </div>
           <div class="col-2">
-            
-            <div v-if="!isAuthenticated()" class="d-flex align-items-center">
-              <button @click="showPopup=true" class="btn btn-primary" type="button">Login</button>
-            </div>
+            <router-link to="/login" class="btn btn-primary">Login</router-link>
           </div>
-
           <div class="col-3">
-            <div v-if="!isAuthenticated()" class="d-flex align-items-center">
-              <button @click="showPopup=true" class="btn btn-success" type="button">Sign Up</button>
-            </div>
-
-            <div v-else class="d-flex align-items-center">
-              <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                  data-bs-toggle="dropdown" aria-expanded="false">
-                  {{ username }}
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <li><a class="dropdown-item" href="#">Profile</a></li>
-                  <li><a class="dropdown-item" href="#">Settings</a></li>
-                  <li><a class="dropdown-item" @click="logout" href="#">Logout</a></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="col-2">
-            <LoginPopup v-if="showPopup" @login="handleLogin" />
+            <router-link to="/signup" class="btn btn-success">Sign Up</router-link>
           </div>
         </div>
       </div>
@@ -48,8 +23,6 @@
 </template>
 
 <script>
-import LoginPopup from '@/components/LoginPopup.vue'; // Import the LoginPopup component
-
 export default {
   name: 'Navbar',
   props: {
@@ -57,50 +30,19 @@ export default {
       type: String,
       default: 'Flownotes.ai'
     },
-    showPopup: {
-      type: Boolean,
-      default: false
+    apiUrl: {
+      type: String,
+      default: 'https://flownotesapi.speer.ai'
     }
   },
   data() {
     return {
-      query: String(),
-      email: String(),
-      password: String(),
-      username: String(),
-      apiUrl: String()
+      query: String()
     };
   },
   methods: {
     search() {
       this.$emit('search', this.query);
-    },
-    isAuthenticated() {
-      // call an emit to getAuthenticationStatus
-      return !!localStorage.getItem('token');
-    },
-    async handleLogin(email, password) {
-      console.log(`email ${email} password ${password}`);
-
-      this.email = email;
-      this.password = password;
-
-      this.$emit('login', email, password);
-    },
-    handleLogout() {
-      // Reset other user-related data
-      this.username = '';
-
-      // Emit the logout event
-      this.$emit('logout');
-    }
-  },
-  components: {
-    LoginPopup
-  },
-  watch: {
-    showPopup: function (oldPop, newPop) {
-      console.log('popup changed', newPop);
     }
   }
 };

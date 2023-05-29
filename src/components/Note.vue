@@ -33,7 +33,7 @@
 
 
 
-            <p class="fa-2x text-muted">
+            <p class="fa-2x text-muted" v-if="note.timestamp">
                 <i class="bi bi-clock me-2"></i>
                 <span>{{ convertTimestamp(note.timestamp) }}</span>
             </p>
@@ -116,6 +116,12 @@ export default {
 
             // format the time
             var formattedTime = day + '/' + month + '/' + year + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2)
+
+            // check for NaN in the date and return null
+            if (day == NaN) {
+                return null;
+            }
+
             return formattedTime
         },
         getTagNotes(tag) {

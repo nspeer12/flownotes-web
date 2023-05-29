@@ -1,43 +1,41 @@
 <template>
-    <div class="signup">
+  <div class="signup">
+    <div class="signup-content">
       <h2>Sign Up</h2>
-      <form @submit.prevent="submitForm">
-        <div class="form-group">
-          <label for="username">Username:</label>
-          <input type="text" id="username" v-model="username" required>
-        </div>
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" id="email" v-model="email" required>
-        </div>
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" id="password" v-model="password" required>
-        </div>
-        <button type="submit">Sign Up</button>
-      </form>
+      <div>
+        <input type="text" id="username" v-model="username" placeholder="Username" required>
+      </div>
+      <div>
+        <input type="email" id="email" v-model="email" placeholder="Email" required>
+      </div>
+      <div>
+        <input type="password" id="password" v-model="password" placeholder="Password" required>
+      </div>
+      <button type="submit" @click="submitForm">Sign Up</button>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        username: '',
-        email: '',
-        password: '',
-      };
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      username: '',
+      email: '',
+      password: '',
+    };
+  },
+  methods: {
+    submitForm() {
+      this.$emit('signup', { 
+        username: this.username, 
+        email: this.email, 
+        password: this.password
+      });
     },
-    methods: {
-      submitForm() {
-        // Here you would usually send the form data to your server
-        console.log('Username:', this.username);
-        console.log('Email:', this.email);
-        console.log('Password:', this.password);
-      },
-    },
-  };
-  </script>
+  },
+};
+</script>
   
   <style scoped>
   .signup {
