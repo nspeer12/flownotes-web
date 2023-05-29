@@ -105,23 +105,30 @@ export default {
     },
     async getNotes() {
       console.log('Get Notes');
-      // const reqUrl = `${this.apiUrl}/notes/${userid}`;
-      // const reqUrl = `https://flownotesapi.speer.ai/notes/${userid}`;
-      const reqUrl = "https://flownotesapi.speer.ai/notes/388036";
-
-      console.log(reqUrl);
-
+      const reqUrl = `https://flownotesapi.speer.ai/notes/${this.userid}`;
+      
       try {
-        const res = await axios.get(reqUrl, {
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem("token")}` }
+        const response = await fetch(reqUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.token}`
+          }
         });
 
-        this.notes = res.data.notes;
-        this.taglist = res.data.taglist;
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        this.notes = data.notes;
+        this.taglist = data.taglist;
       } catch (error) {
         console.log('Get notes error:', error);
       }
     },
+
     async getPins() {
       const reqUrl = `${this.apiUrl}/pin/${this.userid}`;
 
