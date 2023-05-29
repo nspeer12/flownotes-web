@@ -28,7 +28,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Flownotes.ai'
+      default: 'Flownotes.io'
     },
     apiUrl: {
       type: String

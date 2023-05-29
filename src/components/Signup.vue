@@ -68,6 +68,8 @@
     border: none;
     padding: 10px;
     margin-bottom: 10px;
+    width: 100%; /* Make the input fields stretch to the width of their parent div */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
   }
   
   .signup-content button {

@@ -77,6 +77,9 @@ export default {
       this.userid = userid;
     },
     async handleSignup(email, password) {
+
+      console.log('Sign up');
+      
       const reqUrl = `${this.apiUrl}/signup`;
 
       try {
