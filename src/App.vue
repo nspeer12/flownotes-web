@@ -35,7 +35,7 @@ export default {
       notes: [],
       taglist: [],
       query: '',
-      apiUrl: 'https://flownotesapi.speer.ai',
+      apiUrl: "https://flownotesapi.speer.ai",
       token: null,
       fullWidth: false,
     }
@@ -107,7 +107,9 @@ export default {
       console.log('Get Notes');
 
       let reqUrl = `${this.apiUrl}/notes/${this.userid}`
-      
+
+      console.log(reqUrl);
+
       try {
         const response = await fetch(reqUrl, {
           method: 'GET',
@@ -117,6 +119,8 @@ export default {
           }
         });
 
+        console.log(reqUrl);
+        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -193,6 +197,10 @@ export default {
     if (this.userid != '') {
       await this.getNotes();
     }
+
+    this.userid = "388036";
+    this.getNotes();
+
   },
   watch: {
     userid: function (newUserid) {

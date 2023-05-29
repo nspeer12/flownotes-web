@@ -31,8 +31,7 @@ export default {
       default: 'Flownotes.ai'
     },
     apiUrl: {
-      type: String,
-      default: 'https://flownotesapi.speer.ai'
+      type: String
     }
   },
   data() {
