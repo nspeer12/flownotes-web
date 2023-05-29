@@ -232,7 +232,8 @@ export default {
       this.userid = localStorage.getItem("userid");
     }
     else {
-      this.$router.push({ name: 'Login' });
+      // this.$router.push({ name: 'Login' });
+      console.log('Not signed in');
     }
 
   },
