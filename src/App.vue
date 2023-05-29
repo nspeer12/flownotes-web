@@ -59,6 +59,7 @@ export default {
           this.userid = userid;
           axios.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
           this.$router.push({ name: 'Notebook' });
+          this.getNotes()
 
         } else {
           console.log('Login failed');
@@ -84,7 +85,7 @@ export default {
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
         });
 
-        this.getNotes(this.userid);
+        this.getNotes();
       } catch (error) {
         console.log('Delete note error:', error);
       }
@@ -102,17 +103,17 @@ export default {
       }).then(res => res.json())
         .then(data => { console.log(data); });
     },
-    async getNotes(userid) {
+    async getNotes() {
       console.log('Get Notes');
       // const reqUrl = `${this.apiUrl}/notes/${userid}`;
       // const reqUrl = `https://flownotesapi.speer.ai/notes/${userid}`;
       const reqUrl = "https://flownotesapi.speer.ai/notes/388036";
-      
+
       console.log(reqUrl);
 
       try {
         const res = await axios.get(reqUrl, {
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem("token")}` }
         });
 
         this.notes = res.data.notes;
@@ -143,7 +144,7 @@ export default {
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
         });
 
-        this.getNotes(this.userid);
+        this.getNotes();
       } catch (error) {
         console.log('Save note error:', error);
       }
@@ -182,13 +183,12 @@ export default {
       this.token = localStorage.getItem("token");
     }
     if (this.userid != '') {
-      await this.getNotes(this.userid);
+      await this.getNotes();
     }
   },
   watch: {
     userid: function (newUserid) {
       console.log('userid changed', newUserid);
-      this.getNotes(newUserid);
     },
     fullWidth: function (oldToggle, newToggle) {
       console.log('width changed: ', oldToggle, newToggle);
