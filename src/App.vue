@@ -48,9 +48,7 @@ export default {
       this.email = email;
 
       try {
-        const res = await axios.post(reqUrl, user, {
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-        });
+        const res = await axios.post(reqUrl, user);
 
         if (res.status === 200) {
           console.log('Login Successful');
@@ -77,36 +75,23 @@ export default {
       this.userid = userid;
     },
     async handleSignup(email, password) {
-
       console.log('Sign up');
-      
       const reqUrl = `${this.apiUrl}/signup`;
 
       try {
-        const response = await fetch(reqUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password
-          })
-        });
+        const response = await axios.post(reqUrl, { email, password });
 
-        const data = await response.json();
-
-        if(data.success) {
+        if (response.data.success) {
           console.log('Signup successful');
 
           // Store userid and token in local storage or another secure place
-          localStorage.setItem('userid', data.userid);
-          localStorage.setItem('token', data.token);
+          localStorage.setItem('userid', response.data.userid);
+          localStorage.setItem('token', response.data.token);
 
           // Redirect to the Notebook view
           this.$router.push({ name: 'Notebook' });
         } else {
-          console.error('Signup failed:', data.message);
+          console.error('Signup failed:', response.data.message);
           // Handle failed signup (e.g., show error message)
         }
       } catch (error) {
@@ -119,55 +104,40 @@ export default {
       const req = { noteid, userid: this.userid };
 
       try {
-        await axios.post(reqUrl, req, {
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-        });
+        await axios.post(reqUrl, req);
 
         this.getNotes();
       } catch (error) {
         console.log('Delete note error:', error);
       }
     },
-    pinNote(noteid, pinbool) {
+    async pinNote(noteid, pinbool) {
       const params = new URLSearchParams();
       params.append('noteid', noteid);
       params.append('pin', Boolean(pinbool));
 
       const reqUrl = `${this.apiUrl}/pin/${this.userid}/?${params}`;
 
-      fetch(reqUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-      }).then(res => res.json())
-        .then(data => { console.log(data); });
+      try {
+        const response = await axios.post(reqUrl);
+        console.log(response.data);
+      } catch (error) {
+        console.log('Pin note error:', error);
+      }
     },
     async getNotes() {
       console.log('Get Notes');
 
-      // must define this way
-      let reqUrl = "https://flownotesapi.speer.ai/notes/" + this.userid + "/";
-
-      console.log(reqUrl);
-
       try {
-        const response = await fetch(reqUrl, {
-          method: 'GET',
+        const reqUrl = `${this.apiUrl}/notes/${this.userid}/`;
+        const response = await axios.get(reqUrl, {
           headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.token}`
           }
         });
 
-        console.log(reqUrl);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        this.notes = data.notes;
-        this.taglist = data.taglist;
+        this.notes = response.data.notes;
+        this.taglist = response.data.taglist;
       } catch (error) {
         console.log('Get notes error:', error);
       }
@@ -176,14 +146,14 @@ export default {
     async getPins() {
       const reqUrl = `${this.apiUrl}/pin/${this.userid}`;
 
-      const res = await fetch(reqUrl, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-      });
-      const data = await res.json();
-      console.log('getpins', data);
+      try {
+        const response = await axios.get(reqUrl);
+        console.log('getpins', response.data);
 
-      this.notes = data.notes;
+        this.notes = response.data.notes;
+      } catch (error) {
+        console.log('Get pins error:', error);
+      }
     },
     async saveNote(newNote) {
       const reqUrl = `${this.apiUrl}/compose`;
@@ -191,9 +161,7 @@ export default {
       this.notes.push(newNote);
 
       try {
-        await axios.post(reqUrl, newNote, {
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-        });
+        await axios.post(reqUrl, newNote);
 
         this.getNotes();
       } catch (error) {
@@ -204,47 +172,43 @@ export default {
       const queryurl = encodeURIComponent(query);
       const reqUrl = `${this.apiUrl}/search/${this.userid}/?query=${queryurl}`;
 
-      fetch(reqUrl, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-      }).then(res => res.json())
-        .then(data => {
-          this.notes = data.notes;
-          this.taglist = data.taglist;
+      axios.get(reqUrl)
+        .then(response => {
+          this.notes = response.data.notes;
+          this.taglist = response.data.taglist;
+        })
+        .catch(error => {
+          console.log('Search notes error:', error);
         });
     },
     async getTagNotes(tag) {
       const reqUrl = `${this.apiUrl}/notes/${this.userid}/hashtag/${tag}`;
 
-      fetch(reqUrl, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-      }).then(res => res.json())
-        .then(data => {
-          this.notes = data.notes;
-          this.taglist = data.taglist;
-        });
+      try {
+        const response = await axios.get(reqUrl);
+        this.notes = response.data.notes;
+        this.taglist = response.data.taglist;
+      } catch (error) {
+        console.log('Get tag notes error:', error);
+      }
     },
     toggleWidth() {
       this.fullWidth = !this.fullWidth;
     }
   },
   async created() {
-    if (localStorage.getItem("token") & localStorage.getItem("userid")) {
+    if (localStorage.getItem("token") && localStorage.getItem("userid")) {
       this.token = localStorage.getItem("token");
       this.userid = localStorage.getItem("userid");
-    }
-    else {
-      // this.$router.push({ name: 'Login' });
+    } else {
       console.log('Not signed in');
     }
-
   },
   watch: {
-    userid: function (newUserid) {
+    userid(newUserid) {
       console.log('userid changed', newUserid);
     },
-    fullWidth: function (oldToggle, newToggle) {
+    fullWidth(oldToggle, newToggle) {
       console.log('width changed: ', oldToggle, newToggle);
     }
   }
