@@ -106,7 +106,7 @@ export default {
     async getNotes() {
       console.log('Get Notes');
 
-      let reqUrl = `${this.apiUrl}/notes/${this.userid}`
+      let reqUrl = "https://flownotesapi.speer.ai/notes/" + this.userid + "/";
 
       console.log(reqUrl);
 
@@ -120,7 +120,7 @@ export default {
         });
 
         console.log(reqUrl);
-        
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
