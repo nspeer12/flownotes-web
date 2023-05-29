@@ -9,7 +9,7 @@
         <div class="col-11">
           <router-view :userid="userid" :apiUrl="apiUrl" :notes="notes" :fullWidth="fullWidth" @note-saved="saveNote"
             @toggle-width="toggleWidth" @pin-note="pinNote" @delete-note="deleteNote" @get-tag-notes="getTagNotes"
-            @login="handleLogin" @user-logged-in="handleUserLoggedIn" @logout="handleLogout" />
+            @login="handleLogin" @user-logged-in="handleUserLoggedIn" @logout="handleLogout" @signup="handleSignup" />
         </div>
       </div>
     </div>
@@ -68,13 +68,48 @@ export default {
         console.log('Login error:', error);
       }
     },
-    handleLogout() {
+    async handleLogout() {
       sessionStorage.removeItem('token');
       this.userid = null;
       console.log('Logged out');
     },
-    handleUserLoggedIn(userid) {
+    async handleUserLoggedIn(userid) {
       this.userid = userid;
+    },
+    async handleSignup(email, password) {
+      const reqUrl = `${this.apiUrl}/signup`;
+
+      try {
+        const response = await fetch(reqUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        });
+
+        const data = await response.json();
+
+        if(data.success) {
+          console.log('Signup successful');
+
+          // Store userid and token in local storage or another secure place
+          localStorage.setItem('userid', data.userid);
+          localStorage.setItem('token', data.token);
+
+          // Redirect to the Notebook view
+          this.$router.push({ name: 'Notebook' });
+        } else {
+          console.error('Signup failed:', data.message);
+          // Handle failed signup (e.g., show error message)
+        }
+      } catch (error) {
+        console.error('Error during signup:', error);
+        // Handle other errors (e.g., network errors)
+      }
     },
     async deleteNote(noteid) {
       const reqUrl = `${this.apiUrl}/delete`;
@@ -106,6 +141,7 @@ export default {
     async getNotes() {
       console.log('Get Notes');
 
+      // must define this way
       let reqUrl = "https://flownotesapi.speer.ai/notes/" + this.userid + "/";
 
       console.log(reqUrl);
@@ -191,15 +227,13 @@ export default {
     }
   },
   async created() {
-    if (localStorage.getItem("token")) {
+    if (localStorage.getItem("token") & localStorage.getItem("userid")) {
       this.token = localStorage.getItem("token");
+      this.userid = localStorage.getItem("userid");
     }
-    if (this.userid != '') {
-      await this.getNotes();
+    else {
+      this.$router.push({ name: 'Login' });
     }
-
-    this.userid = "388036";
-    this.getNotes();
 
   },
   watch: {
