@@ -1,34 +1,15 @@
 <template>
   <div>
-    <Navbar 
-      :query="query" 
-      :apiUrl="apiUrl" 
-      @search="searchNotes" 
-    />
+    <Navbar :query="query" :apiUrl="apiUrl" @search="searchNotes" />
     <div class="pt-5">
       <div class="row">
         <div class="col-1">
-          <Sidebar 
-            @pins="getPins" 
-            @getTagNotes="getTagNotes" 
-            :taglist="taglist" 
-          />
+          <Sidebar @pins="getPins" @getTagNotes="getTagNotes" :taglist="taglist" />
         </div>
         <div class="col-11">
-          <router-view
-            :userid="userid"
-            :apiUrl="apiUrl"
-            :notes="notes"
-            :fullWidth="fullWidth"
-            @note-saved="saveNote"
-            @toggle-width="toggleWidth"
-            @pin-note="pinNote"
-            @delete-note="deleteNote"
-            @get-tag-notes="getTagNotes"
-            @login="handleLogin" 
-            @user-logged-in="handleUserLoggedIn"
-            @logout="handleLogout"
-          />
+          <router-view :userid="userid" :apiUrl="apiUrl" :notes="notes" :fullWidth="fullWidth" @note-saved="saveNote"
+            @toggle-width="toggleWidth" @pin-note="pinNote" @delete-note="deleteNote" @get-tag-notes="getTagNotes"
+            @login="handleLogin" @user-logged-in="handleUserLoggedIn" @logout="handleLogout" />
         </div>
       </div>
     </div>
@@ -71,10 +52,12 @@ export default {
         });
 
         if (res.status === 200) {
+          console.log('Login Successful');
           const { userid, token } = res.data;
           sessionStorage.setItem('token', token);
           this.userid = userid;
           axios.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
+          this.$router.push({ name: 'Notebook' });
         } else {
           console.log('Login failed');
         }
