@@ -105,7 +105,7 @@ export default {
     },
     async getNotes() {
       console.log('Get Notes');
-      const reqUrl = "https://flownotesapi.speer.ai/notes/388036";
+      const reqUrl = "https://flownotes.io/notes/388036";
 
       try {
         const response = await fetch(reqUrl, {
