@@ -60,5 +60,5 @@ export default {
 </script>
 
 <style>
-/* Navbar styles.. */
+/* Navbar styles. */
 </style>
