@@ -103,6 +103,7 @@ export default {
         .then(data => { console.log(data); });
     },
     async getNotes(userid) {
+      console.log('Get Notes');
       // const reqUrl = `${this.apiUrl}/notes/${userid}`;
       const reqUrl = `https://flownotesapi.speer.ai/notes/${userid}`;
 
@@ -184,7 +185,7 @@ export default {
   watch: {
     userid: function (newUserid) {
       console.log('userid changed', newUserid);
-      // this.getNotes(newUserid);
+      this.getNotes(newUserid);
     },
     fullWidth: function (oldToggle, newToggle) {
       console.log('width changed: ', oldToggle, newToggle);
