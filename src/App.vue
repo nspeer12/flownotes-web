@@ -42,6 +42,7 @@ export default {
   },
   methods: {
     async handleLogin(email, password) {
+      console.log('Handling Login in App');
       const reqUrl = `${this.apiUrl}/login`;
       const user = { email, password };
       this.email = email;
