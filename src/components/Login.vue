@@ -3,12 +3,15 @@
     <div class="login-content">
       <h2>Welcome back</h2>
       <div>
-          <input v-model="email" type="text" placeholder="Email" />
+        <input v-model="email" type="text" placeholder="Email" />
       </div>
       <div>
-          <input v-model="password" type="password" placeholder="Password" />
+        <input v-model="password" type="password" placeholder="Password" />
       </div>
       <button @click="login(email, password)">Login</button>
+      <div class="signup-link">
+        Not a member? <router-link to="/signup">Sign up</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -23,12 +26,12 @@ export default {
   },
   methods: {
     login(email, password) {
-      console.log(`login ${email}`)
       this.$emit('login', email, password);
     }
   }
 };
 </script>
+
 
 <style scoped>
 .login {

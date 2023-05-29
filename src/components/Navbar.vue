@@ -11,10 +11,11 @@
             <button @click="search" class="btn btn-outline-success" type="button">Search</button>
           </div>
           <div class="col-2">
-            <router-link to="/login" class="btn btn-primary">Login</router-link>
+            <router-link v-if="!isLoggedIn" to="/login" class="btn btn-primary">Login</router-link>
+            <button v-if="isLoggedIn" @click="logout" class="btn btn-danger">Logout</button>
           </div>
           <div class="col-3">
-            <router-link to="/signup" class="btn btn-success">Sign Up</router-link>
+            <router-link v-if="!isLoggedIn" to="/signup" class="btn btn-success">Sign Up</router-link>
           </div>
         </div>
       </div>
@@ -36,12 +37,23 @@ export default {
   },
   data() {
     return {
-      query: String()
+      query: String(),
+      isLoggedIn: false // Add a new data property for tracking login status
     };
   },
   methods: {
     search() {
       this.$emit('search', this.query);
+    },
+    logout() {
+      // Perform logout actions here (e.g., clear token, redirect, etc.)
+      this.$emit('logout');
+    }
+  },
+  created() {
+    // Check if a token is present in the browser (adjust this condition based on your specific token storage mechanism)
+    if (sessionStorage.getItem('token')) {
+      this.isLoggedIn = true;
     }
   }
 };
