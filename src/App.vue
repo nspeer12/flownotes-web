@@ -7,7 +7,7 @@
           <Sidebar @pins="getPins" @getTagNotes="getTagNotes" :taglist="taglist" />
         </div>
         <div class="col-11">
-          <router-view :userid="userid" :apiUrl="apiUrl" :notes="notes" :fullWidth="fullWidth" @note-saved="saveNote"
+          <router-view :userid="userid" :apiUrl="apiUrl" :notes="notes" :fullWidth="fullWidth" :loggedIn="loggedIn" @note-saved="saveNote"
             @toggle-width="toggleWidth" @pin-note="pinNote" @delete-note="deleteNote" @get-tag-notes="getTagNotes"
             @login="handleLogin" @user-logged-in="handleUserLoggedIn" @logout="handleLogout" @signup="handleSignup" />
         </div>
@@ -38,6 +38,7 @@ export default {
       apiUrl: "https://flownotesapi.speer.ai",
       token: null,
       fullWidth: false,
+      loggedIn: false,
     }
   },
   methods: {
@@ -55,6 +56,7 @@ export default {
           const { userid, token } = res.data;
           sessionStorage.setItem('token', token);
           this.userid = userid;
+          this.loggedIn = true;
           axios.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
           this.$router.push({ name: 'Notebook' });
           this.getNotes()
@@ -69,6 +71,7 @@ export default {
     async handleLogout() {
       sessionStorage.removeItem('token');
       this.userid = null;
+      this.loggedIn = false;
       console.log('Logged out');
     },
     async handleUserLoggedIn(userid) {
@@ -87,6 +90,7 @@ export default {
           // Store userid and token in local storage or another secure place
           localStorage.setItem('userid', response.data.userid);
           localStorage.setItem('token', response.data.token);
+          this.loggedIn = true;
 
           // Redirect to the Notebook view
           this.$router.push({ name: 'Notebook' });

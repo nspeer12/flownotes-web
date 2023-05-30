@@ -33,12 +33,14 @@ export default {
     },
     apiUrl: {
       type: String
+    },
+    loggedIn: {
+      type: Boolean
     }
   },
   data() {
     return {
-      query: String(),
-      isLoggedIn: false // Add a new data property for tracking login status
+      query: String()
     };
   },
   methods: {
