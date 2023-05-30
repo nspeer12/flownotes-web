@@ -198,9 +198,23 @@ export default {
     },
     toggleWidth() {
       this.fullWidth = !this.fullWidth;
+    },
+    async wakeServer() {
+      // make a get request to apiUrl /redoc
+      const reqUrl = this.apiUrl + "/redoc"
+
+      try {
+        const response = await axios.get(reqUrl);
+      } catch (error) {
+        console.log('Error communicating with server: ', error);
+      }
+
     }
   },
   async created() {
+
+    this.wakeServer();
+    
     if (localStorage.getItem("token") && localStorage.getItem("userid")) {
       this.token = localStorage.getItem("token");
       this.userid = localStorage.getItem("userid");
