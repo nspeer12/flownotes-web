@@ -175,7 +175,7 @@ export default {
       console.log('dalle')
 
       const prompt = encodeURIComponent(this.message)
-      const endpoint = `${this.apiUrl}/dalle/${this.userid}/?query=${prompt}`
+      const endpoint = this.apiUrl + "/dalle/" + this.userid + "query=" + prompt
 
       console.log(endpoint)
 

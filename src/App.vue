@@ -43,7 +43,7 @@ export default {
   methods: {
     async handleLogin(email, password) {
       console.log('Handling Login in App');
-      const reqUrl = `${this.apiUrl}/login`;
+      const reqUrl = this.apiUrl + "/login";
       const user = { email, password };
       this.email = email;
 
@@ -100,7 +100,7 @@ export default {
       }
     },
     async deleteNote(noteid) {
-      const reqUrl = `${this.apiUrl}/delete`;
+      const reqUrl = this.apiUrl + "/delete";
       const req = { noteid, userid: this.userid };
 
       try {
@@ -116,7 +116,7 @@ export default {
       params.append('noteid', noteid);
       params.append('pin', Boolean(pinbool));
 
-      const reqUrl = `${this.apiUrl}/pin/${this.userid}/?${params}`;
+      const reqUrl = this.apiUrl + "pin/" + this.userid + "/?" + params;
 
       try {
         const response = await axios.post(reqUrl);
@@ -144,7 +144,7 @@ export default {
     },
 
     async getPins() {
-      const reqUrl = `${this.apiUrl}/pin/${this.userid}`;
+      const reqUrl = this.apiUrl + "/pin/" + this.userid;
 
       try {
         const response = await axios.get(reqUrl);
@@ -156,7 +156,7 @@ export default {
       }
     },
     async saveNote(newNote) {
-      const reqUrl = `${this.apiUrl}/compose`;
+      const reqUrl = this.apiUrl + "/compose";
 
       this.notes.push(newNote);
 
@@ -170,7 +170,7 @@ export default {
     },
     searchNotes(query) {
       const queryurl = encodeURIComponent(query);
-      const reqUrl = `${this.apiUrl}/search/${this.userid}/?query=${queryurl}`;
+      const reqUrl = this.apiUrl + "/search/" + this.userid + "/?query=" + queryurl;
 
       axios.get(reqUrl)
         .then(response => {
@@ -182,7 +182,7 @@ export default {
         });
     },
     async getTagNotes(tag) {
-      const reqUrl = `${this.apiUrl}/notes/${this.userid}/hashtag/${tag}`;
+      const reqUrl = this.apiUrl + "/notes/" + this.userid + "/hashtag/" + tag;
 
       try {
         const response = await axios.get(reqUrl);
