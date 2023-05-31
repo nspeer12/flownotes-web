@@ -5,10 +5,10 @@
       <div class="d-flex align-items-center">
         <div class="row">
           <div class="col-5">
-            <input v-model="query" class="form-control me-2 search-button" id="search" type="search" placeholder="" />
+            <input v-model="query" class="form-control me-2 search-button" id="search" type="search" placeholder="coming soon :)" />
           </div>
           <div class="col-2">
-            <button @click="search" class="btn btn-outline-success" type="button">Search</button>
+            <button @click="search" class="btn btn-outline-success" type="button" disabled>Search</button>
           </div>
           <div class="col-2">
             <router-link v-if="!isLoggedIn" to="/login" class="btn btn-primary">Login</router-link>

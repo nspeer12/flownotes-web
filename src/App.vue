@@ -79,10 +79,15 @@ export default {
     },
     async handleSignup(email, password) {
       console.log('Sign up');
-      const reqUrl = `${this.apiUrl}/signup`;
+      const reqUrl = this.apiUrl + "/signup";
 
       try {
-        const response = await axios.post(reqUrl, { email, password });
+        const response = await axios.post(reqUrl, { email, password }, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type',
+          },
+        });
 
         if (response.data.success) {
           console.log('Signup successful');
@@ -103,6 +108,7 @@ export default {
         // Handle other errors (e.g., network errors)
       }
     },
+
     async deleteNote(noteid) {
       const reqUrl = this.apiUrl + "/delete";
       const req = { noteid, userid: this.userid };
@@ -214,7 +220,7 @@ export default {
   async created() {
 
     this.wakeServer();
-    
+
     if (localStorage.getItem("token") && localStorage.getItem("userid")) {
       this.token = localStorage.getItem("token");
       this.userid = localStorage.getItem("userid");

@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="login my-3">
     <div class="login-content">
       <h2>Welcome back</h2>
       <div>
@@ -9,7 +9,7 @@
         <input v-model="password" type="password" placeholder="Password" />
       </div>
       <button @click="login(email, password)">Login</button>
-      <div class="signup-link">
+      <div class="signup-link pt-3">
         Not a member? <router-link to="/signup">Sign up</router-link>
       </div>
     </div>
