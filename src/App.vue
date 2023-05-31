@@ -73,6 +73,8 @@ export default {
       this.userid = null;
       this.loggedIn = false;
       console.log('Logged out');
+      this.$router.push({ name: 'Login' });
+
     },
     async handleUserLoggedIn(userid) {
       this.userid = userid;
