@@ -224,6 +224,7 @@ export default {
     if (localStorage.getItem("token") && localStorage.getItem("userid")) {
       this.token = localStorage.getItem("token");
       this.userid = localStorage.getItem("userid");
+      this.getNotes();
     } else {
       console.log('Not signed in');
     }
