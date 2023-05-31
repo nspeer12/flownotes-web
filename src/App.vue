@@ -47,13 +47,16 @@ export default {
       const user = { email, password };
       this.email = email;
 
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Access-Control-Allow-Origin', '*');
+
+      console.log(headers);
+      
       try {
         const response = await fetch(reqUrl, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
+          headers: headers,
           body: JSON.stringify(user),
         });
 
