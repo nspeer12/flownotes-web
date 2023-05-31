@@ -89,27 +89,25 @@ export default {
       const reqUrl = this.apiUrl + "/signup";
 
       try {
-        const response = await fetch(reqUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
-          body: JSON.stringify({ email, password }),
-        });
+        const response = await axios.post(reqUrl, { email, password });
 
-        if (response.ok) {
+        if (response.data.success) {
           console.log('Signup successful');
-          const data = await response.json();
-          localStorage.setItem('userid', data.userid);
-          localStorage.setItem('token', data.token);
+
+          // Store userid and token in local storage or another secure place
+          localStorage.setItem('userid', response.data.userid);
+          localStorage.setItem('token', response.data.token);
           this.loggedIn = true;
+
+          // Redirect to the Notebook view
           this.$router.push({ name: 'Notebook' });
         } else {
-          console.error('Signup failed');
+          console.error('Signup failed:', response.data.message);
+          // Handle failed signup (e.g., show error message)
         }
       } catch (error) {
         console.error('Error during signup:', error);
+        // Handle other errors (e.g., network errors)
       }
     },
 
