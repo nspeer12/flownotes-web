@@ -20,7 +20,6 @@
 import Navbar from './components/Navbar.vue'
 import Sidebar from './components/Sidebar.vue'
 import Notebook from './components/Notebook.vue'
-import axios from 'axios';
 
 export default {
   name: 'App',
@@ -49,17 +48,24 @@ export default {
       this.email = email;
 
       try {
-        const res = await axios.post(reqUrl, user);
+        const response = await fetch(reqUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify(user),
+        });
 
-        if (res.status === 200) {
+        if (response.ok) {
           console.log('Login Successful');
-          const { userid, token } = res.data;
+          const data = await response.json();
+          const { userid, token } = data;
           sessionStorage.setItem('token', token);
           this.userid = userid;
           this.loggedIn = true;
-          axios.defaults.headers.common['Authorization'] = `Bearer ${sessionStorage.getItem('token')}`;
           this.$router.push({ name: 'Notebook' });
-          this.getNotes()
+          this.getNotes();
 
         } else {
           console.log('Login failed');
@@ -74,7 +80,6 @@ export default {
       this.loggedIn = false;
       console.log('Logged out');
       this.$router.push({ name: 'Login' });
-
     },
     async handleUserLoggedIn(userid) {
       this.userid = userid;
@@ -84,30 +89,27 @@ export default {
       const reqUrl = this.apiUrl + "/signup";
 
       try {
-        const response = await axios.post(reqUrl, { email, password }, {
+        const response = await fetch(reqUrl, {
+          method: 'POST',
           headers: {
+            'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type',
           },
+          body: JSON.stringify({ email, password }),
         });
 
-        if (response.data.success) {
+        if (response.ok) {
           console.log('Signup successful');
-
-          // Store userid and token in local storage or another secure place
-          localStorage.setItem('userid', response.data.userid);
-          localStorage.setItem('token', response.data.token);
+          const data = await response.json();
+          localStorage.setItem('userid', data.userid);
+          localStorage.setItem('token', data.token);
           this.loggedIn = true;
-
-          // Redirect to the Notebook view
           this.$router.push({ name: 'Notebook' });
         } else {
-          console.error('Signup failed:', response.data.message);
-          // Handle failed signup (e.g., show error message)
+          console.error('Signup failed');
         }
       } catch (error) {
         console.error('Error during signup:', error);
-        // Handle other errors (e.g., network errors)
       }
     },
 
@@ -116,7 +118,14 @@ export default {
       const req = { noteid, userid: this.userid };
 
       try {
-        await axios.post(reqUrl, req);
+        await fetch(reqUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify(req),
+        });
 
         this.getNotes();
       } catch (error) {
@@ -131,8 +140,14 @@ export default {
       const reqUrl = this.apiUrl + "pin/" + this.userid + "/?" + params;
 
       try {
-        const response = await axios.post(reqUrl);
-        console.log(response.data);
+        const response = await fetch(reqUrl, {
+          method: 'POST',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+        });
+
+        console.log(response);
       } catch (error) {
         console.log('Pin note error:', error);
       }
@@ -142,14 +157,20 @@ export default {
 
       try {
         const reqUrl = `${this.apiUrl}/notes/${this.userid}/`;
-        const response = await axios.get(reqUrl, {
+        const response = await fetch(reqUrl, {
           headers: {
-            'Authorization': `Bearer ${this.token}`
-          }
+            'Authorization': `Bearer ${this.token}`,
+            'Access-Control-Allow-Origin': '*',
+          },
         });
 
-        this.notes = response.data.notes;
-        this.taglist = response.data.taglist;
+        if (response.ok) {
+          const data = await response.json();
+          this.notes = data.notes;
+          this.taglist = data.taglist;
+        } else {
+          console.log('Get notes failed');
+        }
       } catch (error) {
         console.log('Get notes error:', error);
       }
@@ -159,10 +180,19 @@ export default {
       const reqUrl = this.apiUrl + "/pin/" + this.userid;
 
       try {
-        const response = await axios.get(reqUrl);
-        console.log('getpins', response.data);
+        const response = await fetch(reqUrl, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+        });
 
-        this.notes = response.data.notes;
+        if (response.ok) {
+          const data = await response.json();
+          console.log('getpins', data);
+          this.notes = data.notes;
+        } else {
+          console.log('Get pins failed');
+        }
       } catch (error) {
         console.log('Get pins error:', error);
       }
@@ -173,7 +203,14 @@ export default {
       this.notes.push(newNote);
 
       try {
-        await axios.post(reqUrl, newNote);
+        await fetch(reqUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: JSON.stringify(newNote),
+        });
 
         this.getNotes();
       } catch (error) {
@@ -184,10 +221,17 @@ export default {
       const queryurl = encodeURIComponent(query);
       const reqUrl = this.apiUrl + "/search/" + this.userid + "/?query=" + queryurl;
 
-      axios.get(reqUrl)
+      fetch(reqUrl)
         .then(response => {
-          this.notes = response.data.notes;
-          this.taglist = response.data.taglist;
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Search notes request failed');
+          }
+        })
+        .then(data => {
+          this.notes = data.notes;
+          this.taglist = data.taglist;
         })
         .catch(error => {
           console.log('Search notes error:', error);
@@ -197,9 +241,19 @@ export default {
       const reqUrl = this.apiUrl + "/notes/" + this.userid + "/hashtag/" + tag;
 
       try {
-        const response = await axios.get(reqUrl);
-        this.notes = response.data.notes;
-        this.taglist = response.data.taglist;
+        const response = await fetch(reqUrl, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          this.notes = data.notes;
+          this.taglist = data.taglist;
+        } else {
+          console.log('Get tag notes failed');
+        }
       } catch (error) {
         console.log('Get tag notes error:', error);
       }
@@ -209,18 +263,16 @@ export default {
     },
     async wakeServer() {
       // make a get request to apiUrl /redoc
-      const reqUrl = this.apiUrl + "/redoc"
+      const reqUrl = this.apiUrl + "/redoc";
 
       try {
-        const response = await axios.get(reqUrl);
+        const response = await fetch(reqUrl);
       } catch (error) {
-        console.log('Error communicating with server: ', error);
+        console.log('Error communicating with server:', error);
       }
-
     }
   },
   async created() {
-
     this.wakeServer();
 
     if (localStorage.getItem("token") && localStorage.getItem("userid")) {
@@ -236,7 +288,7 @@ export default {
       console.log('userid changed', newUserid);
     },
     fullWidth(oldToggle, newToggle) {
-      console.log('width changed: ', oldToggle, newToggle);
+      console.log('width changed:', oldToggle, newToggle);
     }
   }
 }
