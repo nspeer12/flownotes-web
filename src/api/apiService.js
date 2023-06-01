@@ -62,5 +62,5 @@ export default {
 
   async wakeServer() {
     return fetchApi('/redoc', 'GET');
-  },
+  }
 };
