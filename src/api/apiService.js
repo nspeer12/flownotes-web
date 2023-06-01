@@ -6,9 +6,16 @@ class ApiService {
     }
   
     async login(email, password) {
-      const url = this.baseUrl + '/login';
-      return axios.post(url, { email, password });
-    }
+        const url = this.baseUrl + '/login';
+        const response = await axios.post(url, { email, password });
+        
+        // Ensure the response contains a userid
+        if(response.data && response.data.userid) {
+          return response.data;
+        } else {
+          throw new Error('Userid not found in response');
+        }
+      }      
   
     async signup(email, password) {
       const url = this.baseUrl + '/signup';

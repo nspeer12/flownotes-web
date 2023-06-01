@@ -54,6 +54,7 @@ export default {
       }
     },
     async handleLogout() {
+      console.log('Logging out');
       sessionStorage.removeItem('token');
       this.userid = null;
       this.loggedIn = false;
