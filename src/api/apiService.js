@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 class ApiService {
     constructor() {
       this.baseUrl = 'https://flownotesapi.speer.ai';
