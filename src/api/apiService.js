@@ -1,101 +1,58 @@
-import axios from "axios";
-
 class ApiService {
-  constructor() {
-    this.baseUrl = process.env.VUE_APP_API_BASE_URL || "https://flownotesapi.speer.ai";
+    constructor() {
+      this.baseUrl = 'https://flownotesapi.speer.ai';
+    }
+  
+    async login(email, password) {
+      const url = this.baseUrl + '/login';
+      return axios.post(url, { email, password });
+    }
+  
+    async signup(email, password) {
+      const url = this.baseUrl + '/signup';
+      return axios.post(url, { email, password });
+    }
+  
+    async getNotes(userId, token) {
+      const url = this.baseUrl + '/notes/' + userId;
+      return axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
+    }
+  
+    async saveNote(note) {
+      const url = this.baseUrl + '/compose';
+      return axios.post(url, note);
+    }
+  
+    async deleteNote(noteId, userId) {
+      const url = this.baseUrl + '/delete';
+      return axios.post(url, { noteId, userId });
+    }
+  
+    async pinNote(noteId, pinBool, userId) {
+      const url = this.baseUrl + '/pin/' + userId;
+      return axios.post(url, { noteId, pin: Boolean(pinBool) });
+    }
+  
+    async getTagNotes(userId, tag) {
+      const url = this.baseUrl + '/notes/' + userId + '/hashtag/' + tag;
+      return axios.get(url);
+    }
+  
+    async getPins(userId) {
+      const url = this.baseUrl + '/pin/' + userId;
+      return axios.get(url);
+    }
+  
+    async searchNotes(userId, query) {
+      const url = this.baseUrl + '/search/' + userId + '?query=' + encodeURIComponent(query);
+      return axios.get(url);
+    }
+  
+    async wakeServer() {
+      const url = this.baseUrl + '/redoc';
+      return axios.get(url);
+    }
   }
-
-  async login(email, password) {
-    const response = await axios.post(`${this.baseUrl}/login`, { email, password });
-    return response.data;
-  }
-
-  async signup(email, password) {
-    const response = await axios.post(`${this.baseUrl}/signup`, { email, password });
-    return response.data;
-  }
-
-  async getNotes(userid, token) {
-    const options = {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
-    const response = await axios.get(`${this.baseUrl}/notes/${userid}`, options);
-    return response.data;
-  }
-
-  async deleteNote(noteid, userid, token) {
-    const options = {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
-    const response = await axios.delete(`${this.baseUrl}/delete/${noteid}`, options);
-    return response.data;
-  }
-
-  async pinNote(noteid, pinbool, userid, token) {
-    const options = {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
-    const response = await axios.put(`${this.baseUrl}/pin/${noteid}`, { pin: pinbool, userid }, options);
-    return response.data;
-  }
-
-  async searchNotes(query, userid, token) {
-    const options = {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
-    const response = await axios.get(`${this.baseUrl}/search/${userid}?query=${query}`, options);
-    return response.data;
-  }
-
-  async saveNote(newNote, userid, token) {
-    const options = {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
-    const response = await axios.post(`${this.baseUrl}/compose`, { ...newNote, userid }, options);
-    return response.data;
-  }
-
-  async getPins(userid, token) {
-    const options = {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
-    const response = await axios.get(`${this.baseUrl}/pin/${userid}`, options);
-    return response.data;
-  }
-
-  async getTagNotes(tag, userid, token) {
-    const options = {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    };
-    const response = await axios.get(`${this.baseUrl}/notes/${userid}/hashtag/${tag}`, options);
-    return response.data;
-  }
-
-  async wakeServer() {
-    const response = await axios.get(`${this.baseUrl}/redoc`);
-    return response.data;
-  }
-}
-
-export default new ApiService();
+  
+  export default new ApiService();
+  
