@@ -1,13 +1,13 @@
 <template>
   <div>
-    <Navbar :query="query" :apiUrl="apiUrl" @search="searchNotes" />
+    <Navbar :query="query" @search="searchNotes" />
     <div class="pt-5">
       <div class="row">
         <div class="col-1">
           <Sidebar @pins="getPins" @getTagNotes="getTagNotes" :taglist="taglist" />
         </div>
         <div class="col-11">
-          <router-view :userid="userid" :apiUrl="apiUrl" :notes="notes" :fullWidth="fullWidth" :loggedIn="loggedIn" @note-saved="saveNote"
+          <router-view :userid="userid" :notes="notes" :fullWidth="fullWidth" :loggedIn="loggedIn" @note-saved="saveNote"
             @toggle-width="toggleWidth" @pin-note="pinNote" @delete-note="deleteNote" @get-tag-notes="getTagNotes"
             @login="handleLogin" @user-logged-in="handleUserLoggedIn" @logout="handleLogout" @signup="handleSignup" />
         </div>
@@ -20,6 +20,7 @@
 import Navbar from './components/Navbar.vue'
 import Sidebar from './components/Sidebar.vue'
 import Notebook from './components/Notebook.vue'
+import apiService from './api/apiService'
 
 export default {
   name: 'App',
@@ -34,7 +35,6 @@ export default {
       notes: [],
       taglist: [],
       query: '',
-      apiUrl: "https://flownotesapi.speer.ai",
       token: null,
       fullWidth: false,
       loggedIn: false,
@@ -42,37 +42,13 @@ export default {
   },
   methods: {
     async handleLogin(email, password) {
-      console.log('Handling Login in App');
-      const reqUrl = this.apiUrl + "/login";
-      const user = { email, password };
-      this.email = email;
-
-      const headers = new Headers();
-      headers.append('Content-Type', 'application/json');
-      headers.append('Access-Control-Allow-Origin', '*');
-
-      console.log(headers);
-      
       try {
-        const response = await fetch(reqUrl, {
-          method: 'POST',
-          headers: headers,
-          body: JSON.stringify(user),
-        });
-
-        if (response.ok) {
-          console.log('Login Successful');
-          const data = await response.json();
-          const { userid, token } = data;
-          sessionStorage.setItem('token', token);
-          this.userid = userid;
-          this.loggedIn = true;
-          this.$router.push({ name: 'Notebook' });
-          this.getNotes();
-
-        } else {
-          console.log('Login failed');
-        }
+        const { userid, token } = await apiService.login(email, password);
+        sessionStorage.setItem('token', token);
+        this.userid = userid;
+        this.loggedIn = true;
+        this.$router.push({ name: 'Notebook' });
+        this.getNotes();
       } catch (error) {
         console.log('Login error:', error);
       }
@@ -88,173 +64,71 @@ export default {
       this.userid = userid;
     },
     async handleSignup(email, password) {
-      console.log('Sign up');
-      const reqUrl = this.apiUrl + "/signup";
-
       try {
-        const response = await axios.post(reqUrl, { email, password });
-
-        if (response.data.success) {
-          console.log('Signup successful');
-
-          // Store userid and token in local storage or another secure place
-          localStorage.setItem('userid', response.data.userid);
-          localStorage.setItem('token', response.data.token);
-          this.loggedIn = true;
-
-          // Redirect to the Notebook view
-          this.$router.push({ name: 'Notebook' });
-        } else {
-          console.error('Signup failed:', response.data.message);
-          // Handle failed signup (e.g., show error message)
-        }
+        const { userid, token } = await apiService.signup(email, password);
+        localStorage.setItem('userid', userid);
+        localStorage.setItem('token', token);
+        this.loggedIn = true;
+        this.$router.push({ name: 'Notebook' });
       } catch (error) {
         console.error('Error during signup:', error);
-        // Handle other errors (e.g., network errors)
       }
     },
-
     async deleteNote(noteid) {
-      const reqUrl = this.apiUrl + "/delete";
-      const req = { noteid, userid: this.userid };
-
       try {
-        await fetch(reqUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
-          body: JSON.stringify(req),
-        });
-
+        await apiService.deleteNote(noteid, this.userid);
         this.getNotes();
       } catch (error) {
         console.log('Delete note error:', error);
       }
     },
     async pinNote(noteid, pinbool) {
-      const params = new URLSearchParams();
-      params.append('noteid', noteid);
-      params.append('pin', Boolean(pinbool));
-
-      const reqUrl = this.apiUrl + "pin/" + this.userid + "/?" + params;
-
       try {
-        const response = await fetch(reqUrl, {
-          method: 'POST',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          },
-        });
-
-        console.log(response);
+        await apiService.pinNote(noteid, pinbool, this.userid);
       } catch (error) {
         console.log('Pin note error:', error);
       }
     },
     async getNotes() {
-      console.log('Get Notes');
-
       try {
-        const reqUrl = `${this.apiUrl}/notes/${this.userid}/`;
-        const response = await fetch(reqUrl, {
-          headers: {
-            'Authorization': `Bearer ${this.token}`,
-            'Access-Control-Allow-Origin': '*',
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          this.notes = data.notes;
-          this.taglist = data.taglist;
-        } else {
-          console.log('Get notes failed');
-        }
+        const data = await apiService.getNotes(this.userid, this.token);
+        this.notes = data.notes;
+        this.taglist = data.taglist;
       } catch (error) {
         console.log('Get notes error:', error);
       }
     },
-
     async getPins() {
-      const reqUrl = this.apiUrl + "/pin/" + this.userid;
-
       try {
-        const response = await fetch(reqUrl, {
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log('getpins', data);
-          this.notes = data.notes;
-        } else {
-          console.log('Get pins failed');
-        }
+        const data = await apiService.getPins(this.userid);
+        this.notes = data.notes;
       } catch (error) {
         console.log('Get pins error:', error);
       }
     },
     async saveNote(newNote) {
-      const reqUrl = this.apiUrl + "/compose";
-
       this.notes.push(newNote);
-
       try {
-        await fetch(reqUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
-          body: JSON.stringify(newNote),
-        });
-
+        await apiService.saveNote(newNote);
         this.getNotes();
       } catch (error) {
         console.log('Save note error:', error);
       }
     },
-    searchNotes(query) {
-      const queryurl = encodeURIComponent(query);
-      const reqUrl = this.apiUrl + "/search/" + this.userid + "/?query=" + queryurl;
-
-      fetch(reqUrl)
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error('Search notes request failed');
-          }
-        })
-        .then(data => {
-          this.notes = data.notes;
-          this.taglist = data.taglist;
-        })
-        .catch(error => {
-          console.log('Search notes error:', error);
-        });
+    async searchNotes(query) {
+      try {
+        const data = await apiService.searchNotes(query, this.userid);
+        this.notes = data.notes;
+        this.taglist = data.taglist;
+      } catch (error) {
+        console.log('Search notes error:', error);
+      }
     },
     async getTagNotes(tag) {
-      const reqUrl = this.apiUrl + "/notes/" + this.userid + "/hashtag/" + tag;
-
       try {
-        const response = await fetch(reqUrl, {
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          this.notes = data.notes;
-          this.taglist = data.taglist;
-        } else {
-          console.log('Get tag notes failed');
-        }
+        const data = await apiService.getTagNotes(tag, this.userid);
+        this.notes = data.notes;
+        this.taglist = data.taglist;
       } catch (error) {
         console.log('Get tag notes error:', error);
       }
@@ -263,11 +137,8 @@ export default {
       this.fullWidth = !this.fullWidth;
     },
     async wakeServer() {
-      // make a get request to apiUrl /redoc
-      const reqUrl = this.apiUrl + "/redoc";
-
       try {
-        const response = await fetch(reqUrl);
+        await apiService.wakeServer();
       } catch (error) {
         console.log('Error communicating with server:', error);
       }
