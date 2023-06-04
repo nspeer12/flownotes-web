@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <a class="navbar-brand">
         {{ title }}
-        <span class="badge bg-primary">beta</span>
+        <span class="badge bg-info">beta</span>
       </a>
       
       <div class="d-flex flex-column flex-md-row align-items-center">
@@ -13,7 +13,7 @@
         <div class="my-2 my-md-0 mx-md-2 d-none d-md-block">
           <button @click="search" class="btn btn-outline-success" type="button" disabled>Search</button>
         </div>
-        <div class="my-2 my-md-0 mx-md-2">
+        <!-- <div class="my-2 my-md-0 mx-md-2">
           <router-link v-if="!loggedIn" to="/login" class="btn btn-primary d-md-none btn-sm">Login</router-link>
           <router-link v-if="!loggedIn" to="/login" class="btn btn-primary d-none d-md-block">Login</router-link>
           <button v-if="loggedIn" @click="logout" class="btn btn-outline-danger d-md-none btn-sm">Logout</button>
@@ -22,7 +22,7 @@
         <div class="my-2 my-md-0 mx-md-2">
           <router-link v-if="!loggedIn" to="/signup" class="btn btn-success d-md-none btn-sm">Sign Up</router-link>
           <router-link v-if="!loggedIn" to="/signup" class="btn btn-success d-none d-md-block">Sign Up</router-link>
-        </div>
+        </div> -->
       </div>
     </div>    
   </nav>

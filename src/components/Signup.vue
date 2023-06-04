@@ -1,20 +1,26 @@
 <template>
-    <div class="signup">
-      <div class="signup-content">
-        <h2>Welcome to Flownotes</h2>
-        <div>
-          <input v-model="email" type="email" placeholder="Email" />
-        </div>
-        <div>
-          <input v-model="password" type="password" placeholder="Password" />
-        </div>
-        <div>
-          <input v-model="confirmPassword" type="password" placeholder="Confirm Password" />
-        </div>
-        <button @click="signup">Sign Up</button>
+  <div class="signup">
+    <div class="signup-content">
+      <h2>Welcome to Flownotes</h2>
+      <div>
+        <input v-model="email" type="email" placeholder="Email" />
+      </div>
+      <div>
+        <input v-model="password" type="password" placeholder="Password" />
+      </div>
+      <div>
+        <input v-model="confirmPassword" type="password" placeholder="Confirm Password" />
+      </div>
+      <button @click="signup">Sign Up</button>
+      <div class="text-center">
+        <p>Already a member? 
+          <router-link to="/login" class="badge bg-primary rounded-pill">Sign In</router-link>
+        </p>
       </div>
     </div>
-  </template>
+  </div>
+</template>
+
   
   <script>
   export default {

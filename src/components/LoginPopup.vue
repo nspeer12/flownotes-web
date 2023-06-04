@@ -1,7 +1,7 @@
 <template>
     <div class="login-popup">
       <div class="login-popup-content">
-        <h2>Welcome back</h2>
+        <h2>Welcome to Flownotes</h2>
         <div>
             <input v-model="email" type="text" placeholder="Email" />
         </div>

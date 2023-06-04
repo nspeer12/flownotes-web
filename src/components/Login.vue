@@ -10,7 +10,8 @@
       </div>
       <button @click="login(email, password)">Login</button>
       <div class="signup-link pt-3">
-        Not a member? <router-link to="/signup">Sign up</router-link>
+        Not a member? 
+        <router-link to="/signup" class="badge bg-primary">Sign up</router-link>
       </div>
     </div>
   </div>
