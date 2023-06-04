@@ -29,11 +29,11 @@
 
       <button type="button" class="btn btn-danger btn-sm mx-1"
         :class="{ 'recording': isRecording, 'not-recording': !isRecording }" @click="toggleRecording">
-        <i class="bi bi-mic"></i>
+        <i class="bi bi-mic"> mic</i>
       </button>
 
 
-      <button type="button" class="btn btn-success btn-sm mx-1" @click="playAudio">
+      <button v-if="recordedSomething" type="button" class="btn btn-success btn-sm mx-1" @click="playAudio">
         <i class="bi bi-play-circle"></i>
       </button>
 
@@ -41,11 +41,9 @@
 
             <button type="button" class="btn btn-secondary btn-sm mx-1" v-on:click="dalle" ><i class="bi bi-palette"></i></button> -->
 
-      <button type="button" class="btn btn-light btn-sm mx-1" @click="convertMarkdown"><i
-          class="bi bi-file-earmark-font"></i></button>
+      <button type="button" class="btn btn-light btn-sm mx-1" @click="convertMarkdown"><i class="bi bi-file-earmark-font"> md</i></button>
 
-      <button type="button" class="btn btn-info btn-sm mx-2"><i class="bi bi-chat-right-dots"
-          v-on:click="gptComplete"></i></button>
+      <button type="button" class="btn btn-info btn-sm mx-2" v-on:click="gptComplete"><i class="bi bi-chat-right-dots"> gpt</i></button>
 
       <button id="save" type="button" class="btn btn-primary btn-sm mx-1" v-on:click="saveNote"><i
           class="bi bi-sd-card"></i>
@@ -73,7 +71,8 @@ export default {
       mediaRecorder: null,
       audioUrl: null,
       audioChunks: [],
-      fontSize: '1em',
+      fontSize: '1.2em',
+      recordedSomething: false,
     }
   },
   props: {
@@ -205,6 +204,7 @@ export default {
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
         this.audioUrl = audioUrl; // Save the audio URL
+        this.recordedSomething = true;
 
         // Do something with the audio here. You can send it to your server, play it, etc.
       });
@@ -216,6 +216,7 @@ export default {
       if (this.isRecording) {
         this.stopRecording();
       } else {
+        
         this.startRecording();
       }
     },
