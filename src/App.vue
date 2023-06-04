@@ -68,6 +68,8 @@ export default {
         const { userid, token } = await apiService.signupRequest(email, password);
         localStorage.setItem('userid', userid);
         localStorage.setItem('token', token);
+        this.userid = userid;
+        this.token = token;
         this.loggedIn = true;
         this.$router.push({ name: 'Notebook' });
       } catch (error) {
