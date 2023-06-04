@@ -1,169 +1,149 @@
 <template>
   <div class="compose card bg-dark my-2 px-3 py-4 pt-sm-5 pt-md-3"  :class="{ 'full-width': !fullWidth }">
-    <div class="compose-box" >
-      <div id="markdown">
-      </div>
-      <textarea v-bind:rows="rows" v-on:input="updateData" v-on:keyup.shift.enter="saveNote" id="compose-input"
-        class="compose-input bg-dark" placeholder="What's on your mind?" :style="{ fontSize: fontSize }"></textarea>
-
+    <div class="compose-box">
+      <div id="markdown"></div>
+      <textarea id="compose-input" class="compose-input bg-dark" :style="{ fontSize: fontSize }" v-bind:rows="rows" v-on:input="updateData" v-on:keyup.shift.enter="saveNote" placeholder="What's on your mind?"></textarea>
     </div>
-
     <div class="image-preview">
-      <!-- if image url, show image, if not do not display -->
       <img v-bind:src="imageUrl ? imageUrl : ''" alt="" />
     </div>
-
     <div class="actions">
-
-      <button type="button" class="btn btn-secondary btn-sm mx-1" @click="toggleWidthHandler">
-            <i :class="fullWidth ? 'bi bi-arrow-bar-right' : 'bi bi-arrow-bar-left'"></i>
-      </button>
-
-      <button v-if="!fullWidth" type="button" class="btn btn-secondary btn-sm mx-1" @click="decreaseFontSize"><i
-          class="bi bi-fonts">-</i></button>
-
-      <button v-if="!fullWidth" type="button" class="btn btn-secondary btn-sm mx-1" @click="increaseFontSize"><i
-          class="bi bi-fonts">+</i></button>
-
-      <button type="button" class="btn btn-danger btn-sm mx-1"
-        :class="{ 'recording': isRecording, 'not-recording': !isRecording }" @click="toggleRecording">
-        <i class="bi bi-mic"> mic</i>
-      </button>
-
-      <button v-if="recordedSomething" type="button" class="btn btn-success btn-sm mx-1" @click="playAudio">
-        <i class="bi bi-play-circle"></i>
-      </button>
-
-      <button v-if="!fullWidth" type="button" class="btn btn-light btn-sm mx-1" @click="convertMarkdown"><i class="bi bi-file-earmark-font"> md</i></button>
-
-      <button type="button" class="btn btn-info btn-sm mx-2" v-on:click="gptComplete"><i class="bi bi-chat-right-dots"> gpt</i></button>
-
-      <button id="save" type="button" class="btn btn-primary btn-sm mx-1" v-on:click="saveNote"><i
-          class="bi bi-sd-card"></i>
-      </button>
+      <button class="btn btn-secondary btn-sm mx-1" @click="toggleWidthHandler" v-if="visibleActions.toggleWidth"><i :class="fullWidth ? 'bi bi-arrow-bar-right' : 'bi bi-arrow-bar-left'"></i></button>
+      <button class="btn btn-secondary btn-sm mx-1" @click="decreaseFontSize" v-if="visibleActions.changeFontSize && !fullWidth"><i class="bi bi-fonts">-</i></button>
+      <button class="btn btn-secondary btn-sm mx-1" @click="increaseFontSize" v-if="visibleActions.changeFontSize && !fullWidth"><i class="bi bi-fonts">+</i></button>
+      <button class="btn btn-danger btn-sm mx-1" :class="{ 'recording': isRecording, 'not-recording': !isRecording }" @click="toggleRecording" v-if="visibleActions.recordAudio"><i class="bi bi-mic"> mic</i></button>
+      <button class="btn btn-success btn-sm mx-1" @click="playAudio" v-if="recordedSomething && visibleActions.playAudio"><i class="bi bi-play-circle"></i></button>
+      <button class="btn btn-light btn-sm mx-1" @click="convertMarkdown" v-if="visibleActions.convertMarkdown && !fullWidth"><i class="bi bi-file-earmark-font"> md</i></button>
+      <button class="btn btn-info btn-sm mx-2" v-on:click="gptComplete" v-if="visibleActions.gptComplete"><i class="bi bi-chat-right-dots"> complete</i></button>
+      <button class="btn btn-info btn-sm mx-2" v-on:click="gptChat" v-if="visibleActions.gptChat"><i class="bi bi-chat-left-quote"> chat</i></button>
+      <button class="btn btn-primary btn-sm mx-1" id="save" v-on:click="saveNote" v-if="visibleActions.saveNote"><i class="bi bi-sd-card"></i></button>
     </div>
   </div>
 </template>
 
-  
 <script>
-
 import Note from './Note.vue'
 import { onMounted, ref } from 'vue'
 import { marked } from 'marked'
 import apiService from '../api/apiService'
 
 export default {
-  name: 'Compose',
+  components: {
+    Note
+  },
   data() {
     return {
-      message: String(''),
-      markdown: String(''),
+      message: '',
+      markdown: '',
       rows: 6,
-      imageUrl: String(''),
+      imageUrl: '',
       isRecording: false,
       mediaRecorder: null,
       audioUrl: null,
       audioChunks: [],
       fontSize: '1.2em',
       recordedSomething: false,
+      visibleActions: {
+        toggleWidth: true,
+        changeFontSize: true,
+        recordAudio: true,
+        playAudio: true,
+        convertMarkdown: true,
+        gptComplete: true,
+        gptChat: true,
+        saveNote: true,
+      },
     }
   },
+  name: 'Compose',
   props: {
     userid: {
       type: String,
     },
-    fullWidth: Boolean(),
-  },
-  components: {
-    Note
+    fullWidth: {
+      type: Boolean,
+    },
   },
   methods: {
     updateData(event) {
-      this.rows = (6 > event.target.value.split('\n').length) ? 6 : event.target.value.split('\n').length
-      this.message = event.target.value
+      this.rows = Math.max(6, event.target.value.split('\n').length);
+      this.message = event.target.value;
     },
     saveNote() {
-      this.markdown = marked(this.message)
+      this.markdown = marked(this.message);
 
       let newNote = {
         userid: this.userid,
         text: this.message,
         markdown: this.markdown,
-        imageUrl: this.imageUrl
-      }
+        imageUrl: this.imageUrl,
+      };
 
-      console.log('save note: ' + newNote.text);
       this.$emit('save-note', newNote);
 
-      this.message = String('')
-      this.imageUrl = String('')
-      this.markdown = String('')
-      document.getElementById('compose-input').value = ''
+      this.resetFields();
+    },
+    resetFields() {
+      this.message = '';
+      this.imageUrl = '';
+      this.markdown = '';
+      document.getElementById('compose-input').value = '';
     },
     toggleWidthHandler() {
       this.$emit('toggleWidth');
     },
     async gptComplete() {
-      console.log('gpt_complete', this.message);
+      await this.gptRequest('gptCompleteRequest');
+    },
+    async gptChat() {
+      this.convertMarkdown();
+      // remove the message from the input field
+      document.getElementById('compose-input').value = '';
+      await this.gptRequest('gptChatRequest');
+    },
+    async gptRequest(requestType) {
+      const completion = await apiService[requestType](this.message);
 
-      const completion = await apiService.gptCompleteRequest(this.message);
+      await this.typeCompletion(completion);
 
-      document.getElementById('compose-input').value = document.getElementById('compose-input').value.replace('...', '');
-
-      // update the text with a cool typing effect
-
-      // split completion into words
+      // this.rows = Math.max(6, composeInput.value.split('\n').length);
+    },
+    async typeCompletion(completion) {
       const words = completion.split(' ');
-
-      // loop through each word in completion
-      for (let i = 0; i < words.length; i++) {
-        // add the word to the text area in a delayed manner
+      for (const word of words) {
         await new Promise(resolve => setTimeout(resolve, 100));
-        document.getElementById('compose-input').value += words[i] + ' '; // add a space after each word
+        this.markdown += word + ' ';
       }
-
-      // update the rows to the number of lines in the text area
-      this.rows = (6 > document.getElementById('compose-input').value.split('\n').length) ? 6 : document.getElementById('compose-input').value.split('\n').length;
     },
     convertMarkdown() {
-      this.markdown = marked(this.message)
-      console.log(this.markdown)
-      document.getElementById('markdown').innerHTML = this.markdown
-
+      this.markdown = marked(this.message);
+      document.getElementById('markdown').innerHTML = this.markdown;
+    },
+    renderMarkdown() {
+      document.getElementById('markdown').innerHTML = marked(this.markdown);
     },
     dalle() {
-      console.log('dalle')
-
-      const prompt = encodeURIComponent(this.message)
-      const endpoint = this.apiUrl + "/dalle/" + this.userid + "query=" + prompt
-
-      console.log(endpoint)
+      const prompt = encodeURIComponent(this.message);
+      const endpoint = `${this.apiUrl}/dalle/${this.userid}query=${prompt}`;
 
       fetch(endpoint, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        }
-      }).then(res => res.json())
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+        .then(res => res.json())
         .then(data => {
-          console.log(data)
-
-          // check if dalle is a property in the response
           if (data.dalle) {
-            // if it is, set the message to the value of the dalle property
-            this.imageUrl = data.dalle
+            this.imageUrl = data.dalle;
           }
-
-        })
-
+        });
     },
     removeImg() {
-      this.imageUrl = String('')
+      this.imageUrl = '';
     },
     startRecording() {
-      // Check if user's browser supports MediaRecorder
       if (!window.MediaRecorder) {
         alert("Your browser does not support audio recording");
         return;
@@ -173,15 +153,13 @@ export default {
         .then(stream => {
           this.mediaRecorder = new MediaRecorder(stream);
 
-          const audioChunks = []; // Declare audioChunks array here
           this.mediaRecorder.addEventListener("dataavailable", event => {
             this.audioChunks.push(event.data);
           });
 
           this.mediaRecorder.addEventListener("stop", () => {
-            const audioBlob = new Blob(audioChunks);
-            const audioUrl = URL.createObjectURL(audioBlob);
-            this.audioUrl = audioUrl; // Save the audio URL
+            this.audioUrl = URL.createObjectURL(new Blob(this.audioChunks));
+            this.recordedSomething = true;
           });
 
           this.mediaRecorder.start();
@@ -190,57 +168,40 @@ export default {
         .catch(err => console.error(err));
     },
     stopRecording() {
-      if (!this.mediaRecorder) {
-        return;
+      if (this.mediaRecorder) {
+        this.mediaRecorder.stop();
+        this.isRecording = false;
       }
-      this.mediaRecorder.addEventListener("stop", () => {
-        const audioBlob = new Blob(this.audioChunks);
-        const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioUrl);
-        this.audioUrl = audioUrl; // Save the audio URL
-        this.recordedSomething = true;
-
-        // Do something with the audio here. You can send it to your server, play it, etc.
-      });
-
-      this.mediaRecorder.stop();
-      this.isRecording = false;
     },
     toggleRecording() {
-      if (this.isRecording) {
-        this.stopRecording();
-      } else {
-        
-        this.startRecording();
-      }
+      this.isRecording ? this.stopRecording() : this.startRecording();
     },
     playAudio() {
       if (this.audioUrl) {
-        const audio = new Audio(this.audioUrl);
-        audio.play();
+        new Audio(this.audioUrl).play();
       }
     },
     increaseFontSize() {
-      let currentSize = parseFloat(this.fontSize);
-      this.fontSize = (currentSize + 0.1) + 'em';
+      this.fontSize = (parseFloat(this.fontSize) + 0.1) + 'em';
     },
     decreaseFontSize() {
       let currentSize = parseFloat(this.fontSize);
       if (currentSize > 0.1) {
         this.fontSize = (currentSize - 0.1) + 'em';
       }
+    },
+  },
+  watch: {
+    markdown: function (val) {
+      this.renderMarkdown();
     }
   }
 }
 </script>
-  
 <style scope>
 .compose-input {
   width: 100%;
-  /* background-color: rgb(38, 42, 46); */
   color: #f8f9fa;
-  /* font-size: 1.1rem; */
-  /* padding: 1rem; */
   border: none;
   outline: none;
 }
@@ -264,6 +225,4 @@ export default {
   max-width: none;
   width: 80%;
 }
-
-
 </style>

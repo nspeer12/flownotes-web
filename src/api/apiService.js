@@ -112,6 +112,39 @@ class ApiService {
       console.error(error);
     }
   }
+
+  async gptChatRequest(prompt) {
+    console.log('chat_gpt', prompt)
+  
+    const query = encodeURIComponent(prompt)
+    console.log(query);
+
+    const endpoint = `${this.baseUrl}/chat/?prompt=${query}`;
+    console.log(endpoint);
+  
+    try {
+      const response = await axios.get(endpoint, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Allow-Control-Allow-Origin': '*'
+        }
+      })
+      
+      const data = response.data;
+      console.log(data);
+      const completion = data.gpt;
+      console.log(completion);
+      
+      // If completion is an array, this will return the last item (object)
+      const lastItem = completion[completion.length - 1];
+      return lastItem.content;
+
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+
   
 }
 export default new ApiService();
