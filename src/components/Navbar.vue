@@ -11,11 +11,11 @@
             <button @click="search" class="btn btn-outline-success" type="button" disabled>Search</button>
           </div>
           <div class="col-2">
-            <router-link v-if="!LoggedIn" to="/login" class="btn btn-primary">Login</router-link>
-            <button v-if="LoggedIn" @click="logout" class="btn btn-outline-danger">Logout</button>
+            <router-link v-if="!loggedIn" to="/login" class="btn btn-primary">Login</router-link>
+            <button v-if="loggedIn" @click="logout" class="btn btn-outline-danger">Logout</button>
           </div>
           <div class="col-3">
-            <router-link v-if="!LoggedIn" to="/signup" class="btn btn-success">Sign Up</router-link>
+            <router-link v-if="!loggedIn" to="/signup" class="btn btn-success">Sign Up</router-link>
           </div>
         </div>
       </div>

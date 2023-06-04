@@ -56,7 +56,7 @@ class ApiService {
 
   async deleteNoteRequest(noteId, userId) {
     const url = this.baseUrl + '/delete';
-    return axios.post(url, { noteId, userId });
+    return axios.post(url, { "noteid": noteId, "userid": userId });
   }
 
   async pinNoteRequest(noteId, pinBool, userId) {
