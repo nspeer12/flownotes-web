@@ -6,26 +6,29 @@
         <span class="badge bg-primary">beta</span>
       </a>
       
-      <div class="d-flex align-items-center">
-        <div class="row">
-          <div class="col-5">
-            <input v-model="query" class="form-control me-2 search-button" id="search" type="search" placeholder="coming soon :)" />
-          </div>
-          <div class="col-2">
-            <button @click="search" class="btn btn-outline-success" type="button" disabled>Search</button>
-          </div>
-          <div class="col-2">
-            <router-link v-if="!loggedIn" to="/login" class="btn btn-primary">Login</router-link>
-            <button v-if="loggedIn" @click="logout" class="btn btn-outline-danger">Logout</button>
-          </div>
-          <div class="col-3">
-            <router-link v-if="!loggedIn" to="/signup" class="btn btn-success">Sign Up</router-link>
-          </div>
+      <div class="d-flex flex-column flex-md-row align-items-center">
+        <div class="my-2 my-md-0 d-none d-md-block">
+          <input v-model="query" class="form-control me-2 search-button" id="search" type="search" placeholder="coming soon :)" />
+        </div>
+        <div class="my-2 my-md-0 mx-md-2 d-none d-md-block">
+          <button @click="search" class="btn btn-outline-success" type="button" disabled>Search</button>
+        </div>
+        <div class="my-2 my-md-0 mx-md-2">
+          <router-link v-if="!loggedIn" to="/login" class="btn btn-primary d-md-none btn-sm">Login</router-link>
+          <router-link v-if="!loggedIn" to="/login" class="btn btn-primary d-none d-md-block">Login</router-link>
+          <button v-if="loggedIn" @click="logout" class="btn btn-outline-danger d-md-none btn-sm">Logout</button>
+          <button v-if="loggedIn" @click="logout" class="btn btn-outline-danger d-none d-md-block">Logout</button>
+        </div>
+        <div class="my-2 my-md-0 mx-md-2">
+          <router-link v-if="!loggedIn" to="/signup" class="btn btn-success d-md-none btn-sm">Sign Up</router-link>
+          <router-link v-if="!loggedIn" to="/signup" class="btn btn-success d-none d-md-block">Sign Up</router-link>
         </div>
       </div>
     </div>    
   </nav>
 </template>
+
+
 
 <script>
 export default {
