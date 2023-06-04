@@ -119,10 +119,11 @@ export default {
     async saveNote(newNote) {
       console.log('Saves notes handler');
 
-      // this.notes.push(newNote);
+      this.notes.push(newNote);
+
       try {
         await apiService.saveNoteRequest(this.userid, newNote);
-        this.getNotes();
+        // this.getNotes();
       } catch (error) {
         console.log('Save note error:', error);
       }
@@ -138,7 +139,7 @@ export default {
     },
     async getTagNotes(tag) {
       try {
-        const data = await apiService.getTagNotesRequest(tag, this.userid);
+        const data = await apiService.getTagNotesRequest(this.userid, tag);
         this.notes = data.notes;
         this.taglist = data.taglist;
       } catch (error) {

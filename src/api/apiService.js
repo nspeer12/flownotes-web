@@ -2,8 +2,8 @@ import axios from 'axios';
 
 class ApiService {
   constructor() {
-    // this.baseUrl = 'http://localhost:5003';
-    this.baseUrl = process.env.API_URL;
+    this.baseUrl = 'http://localhost:5003';
+    // this.baseUrl = process.env.API_URL;
     console.log('API_URL:', this.baseUrl);
   }
 
@@ -34,7 +34,7 @@ class ApiService {
 
   async getNotesRequest(userId, token) {
     const url = this.baseUrl + '/notes/' + userId + '/';
-  
+
     try {
       const response = await axios.get(url, {
         headers: {
@@ -83,6 +83,34 @@ class ApiService {
     const url = this.baseUrl + '/redoc';
     return axios.get(url);
   }
-}
 
+  async gptCompleteRequest(prompt) {
+    console.log('gpt_complete', prompt)
+  
+    const query = encodeURIComponent(prompt)
+    console.log(query);
+
+    const endpoint = `${this.baseUrl}/complete/?prompt=${query}`; // use encoded query here
+    console.log(endpoint);
+  
+    try {
+      const response = await axios.get(endpoint, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Allow-Control-Allow-Origin': '*'
+        }
+      })
+      
+      const data = response.data;
+      console.log(data);
+      const completion = data.gpt;
+      console.log(completion);
+      return completion;
+      
+    } catch(error) {
+      console.error(error);
+    }
+  }
+  
+}
 export default new ApiService();

@@ -57,9 +57,9 @@
 <script>
 
 import Note from './Note.vue'
-
 import { onMounted, ref } from 'vue'
 import { marked } from 'marked'
+import apiService from '../api/apiService'
 
 export default {
   name: 'Compose',
@@ -111,54 +111,27 @@ export default {
     toggleWidthHandler() {
       this.$emit('toggleWidth');
     },
-    gptComplete() {
-      console.log('gpt_complete', this.message)
+    async gptComplete() {
+      console.log('gpt_complete', this.message);
 
-      // encode the prompt
-      const prompt = encodeURIComponent(this.message)
+      const completion = await apiService.gptCompleteRequest(this.message);
 
-      console.log(`${this.apiUrl}/complete/${this.userid}/?query=${prompt}`)
-      // make a fetch call to the following url
-      const endpoint = `${this.apiUrl}/complete/${this.userid}/?query=${prompt}`
+      document.getElementById('compose-input').value = document.getElementById('compose-input').value.replace('...', '');
 
+      // update the text with a cool typing effect
 
-      // while waiting for the data, set the message to 'loading...'
-      document.getElementById('compose-input').value += '\n' + '...'
+      // split completion into words
+      const words = completion.split(' ');
 
-      fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Allow-Control-Allow-Origin': '*'
-        }
-      }).then(res => res.json())
-        .then(data => {
-          console.log(data)
+      // loop through each word in completion
+      for (let i = 0; i < words.length; i++) {
+        // add the word to the text area in a delayed manner
+        await new Promise(resolve => setTimeout(resolve, 100));
+        document.getElementById('compose-input').value += words[i] + ' '; // add a space after each word
+      }
 
-          if (data.gpt.length > 0) {
-            this.message = String(data.gpt[0])
-          }
-
-          // update the value of the text area with the message
-
-
-          document.getElementById('compose-input').value = document.getElementById('compose-input').value.replace('...', '')
-
-          // update the text with a cool typing effect
-
-          // loop through each token in this.message
-          for (let i = 0; i < this.message.length; i++) {
-            // add the token to the text area
-
-            setTimeout(() => { document.getElementById('compose-input').value += this.message[i], 1000 })
-          }
-
-          // document.getElementById('compose-input').value += this.message
-
-          // update the rows to the number of lines in the text area
-          this.rows = (6 > document.getElementById('compose-input').value.split('\n').length) ? 6 : document.getElementById('compose-input').value.split('\n').length
-          // this.message = String('test')
-        })
+      // update the rows to the number of lines in the text area
+      this.rows = (6 > document.getElementById('compose-input').value.split('\n').length) ? 6 : document.getElementById('compose-input').value.split('\n').length;
     },
     convertMarkdown() {
       this.markdown = marked(this.message)
