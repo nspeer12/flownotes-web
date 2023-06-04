@@ -3,7 +3,7 @@
     <div class="compose-box" >
       <div id="markdown">
       </div>
-      <textarea v-bind:rows="rows" v-on:input="updateData" v-on:keyup.shift.enter="saveMessage" id="compose-input"
+      <textarea v-bind:rows="rows" v-on:input="updateData" v-on:keyup.shift.enter="saveNote" id="compose-input"
         class="compose-input bg-dark" placeholder="What's on your mind?" :style="{ fontSize: fontSize }"></textarea>
 
 
@@ -47,7 +47,7 @@
       <button type="button" class="btn btn-info btn-sm mx-2"><i class="bi bi-chat-right-dots"
           v-on:click="gptComplete"></i></button>
 
-      <button id="save" type="button" class="btn btn-primary btn-sm mx-1" v-on:click="saveMessage"><i
+      <button id="save" type="button" class="btn btn-primary btn-sm mx-1" v-on:click="saveNote"><i
           class="bi bi-sd-card"></i>
       </button>
     </div>
@@ -81,9 +81,6 @@ export default {
       type: String,
     },
     fullWidth: Boolean(),
-    apiUrl: {
-      type: String,
-    },
   },
   components: {
     Note
@@ -93,10 +90,7 @@ export default {
       this.rows = (6 > event.target.value.split('\n').length) ? 6 : event.target.value.split('\n').length
       this.message = event.target.value
     },
-    saveMessage() {
-
-      // Emit the message value
-
+    saveNote() {
       this.markdown = marked(this.message)
 
       let newNote = {
@@ -105,13 +99,14 @@ export default {
         markdown: this.markdown,
         imageUrl: this.imageUrl
       }
-      this.$emit('note-saved', newNote);
+
+      console.log('save note: ' + newNote.text);
+      this.$emit('save-note', newNote);
 
       this.message = String('')
       this.imageUrl = String('')
       this.markdown = String('')
       document.getElementById('compose-input').value = ''
-
     },
     toggleWidthHandler() {
       this.$emit('toggleWidth');

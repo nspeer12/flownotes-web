@@ -36,6 +36,9 @@ export default {
     },
     loggedIn: {
       type: Boolean
+    },
+    userid: {
+      type: String
     }
   },
   data() {
@@ -49,6 +52,7 @@ export default {
     },
     logout() {
       // Perform logout actions here (e.g., clear token, redirect, etc.)
+      console.log('Log out pressed');
       this.$emit('logout');
     }
   },
