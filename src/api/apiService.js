@@ -2,8 +2,8 @@ import axios from 'axios';
 
 class ApiService {
   constructor() {
-    this.baseUrl = 'http://localhost:5003';
-    // this.baseUrl = process.env.API_URL;
+    // this.baseUrl = 'http://localhost:5003';
+    this.baseUrl = process.env.API_URL;
     console.log('API_URL:', this.baseUrl);
   }
 
@@ -106,7 +106,7 @@ class ApiService {
       const completion = data.gpt;
       console.log(completion);
       return completion;
-      
+
     } catch(error) {
       console.error(error);
     }
