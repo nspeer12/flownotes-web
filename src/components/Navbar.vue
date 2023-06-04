@@ -1,7 +1,11 @@
 <template>
-  <nav class="navbar navbar-dark bg-dark fixed-top">
+  <nav class="navbar navbar-dark bg-dark fixed-top mb-2">
     <div class="container-fluid">
-      <a class="navbar-brand">{{ title }}</a>
+      <a class="navbar-brand">
+        {{ title }}
+        <span class="badge bg-primary">beta</span>
+      </a>
+      
       <div class="d-flex align-items-center">
         <div class="row">
           <div class="col-5">

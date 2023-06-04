@@ -3,10 +3,10 @@
     <Navbar :query="query" :fullWidth="fullWidth" :loggedIn="loggedIn" :userid="userid" @search="searchNotes" @login="handleLogin" @user-logged-in="handleUserLoggedIn" @logout="handleLogout" />
     <div class="pt-5">
       <div class="row">
-        <div class="col-1">
+        <div class="col-md-1 d-none d-md-block">
           <Sidebar @pins="getPins" @getTagNotes="getTagNotes" :taglist="taglist" />
         </div>
-        <div class="col-11">
+        <div class="col-12 col-md-11">
           <router-view :userid="userid" :notes="notes" :fullWidth="fullWidth" :loggedIn="loggedIn" @save-note="saveNote"
             @toggle-width="toggleWidth" @pin-note="pinNote" @delete-note="deleteNote" @get-tag-notes="getTagNotes"
             @login="handleLogin" @user-logged-in="handleUserLoggedIn" @logout="handleLogout" @signup="handleSignup" />
@@ -21,6 +21,7 @@ import Navbar from './components/Navbar.vue'
 import Sidebar from './components/Sidebar.vue'
 import Notebook from './components/Notebook.vue'
 import apiService from './api/apiService'
+import AOS from 'aos';
 
 export default {
   name: 'App',
@@ -36,8 +37,9 @@ export default {
       taglist: [],
       query: '',
       token: '',
-      fullWidth: false,
+      fullWidth: window.innerWidth <= 768 ? true : false,
       loggedIn: false,
+      resizeHandler: null
     }
   },
   methods: {
@@ -161,9 +163,15 @@ export default {
       }
     }
   },
-  async created() {
+  created() {
     this.wakeServer();
 
+    this.resizeHandler = () => {
+      this.fullWidth = window.innerWidth <= 768;
+    }
+    
+    window.addEventListener('resize', this.resizeHandler);
+    
     if (localStorage.getItem("token") && localStorage.getItem("userid")) {
       this.token = localStorage.getItem("token");
       this.userid = localStorage.getItem("userid");
@@ -173,6 +181,9 @@ export default {
       // push login to the router
       this.$router.push({ name: 'Login' });
     }
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.resizeHandler);
   },
   watch: {
     userid(newUserid) {
@@ -184,6 +195,8 @@ export default {
     }
   }
 }
+
+AOS.init();
 </script>
 
 <style>

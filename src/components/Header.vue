@@ -2,9 +2,7 @@
 
     <header>
         <h1>{{ title  }}</h1>
-        <Button text="login" color="blue" />
-        <Button text="Add Note" color="green"/>
-        <Button text="Delete Task" color="red"/>
+        <span class="badge badge-primary">Primary</span>
     </header>
 </template>
 

@@ -1,11 +1,10 @@
 <template>
-  <div class="compose card bg-dark my-2 px-3 py-2" :class="{ 'full-width': !fullWidth }">
+  <div class="compose card bg-dark my-2 px-3 py-4 pt-sm-5 pt-md-3"  :class="{ 'full-width': !fullWidth }">
     <div class="compose-box" >
       <div id="markdown">
       </div>
       <textarea v-bind:rows="rows" v-on:input="updateData" v-on:keyup.shift.enter="saveNote" id="compose-input"
         class="compose-input bg-dark" placeholder="What's on your mind?" :style="{ fontSize: fontSize }"></textarea>
-
 
     </div>
 
@@ -18,30 +17,24 @@
 
       <button type="button" class="btn btn-secondary btn-sm mx-1" @click="toggleWidthHandler">
             <i :class="fullWidth ? 'bi bi-arrow-bar-right' : 'bi bi-arrow-bar-left'"></i>
-          </button>
+      </button>
 
-      <button type="button" class="btn btn-secondary btn-sm mx-1" @click="decreaseFontSize"><i
+      <button v-if="!fullWidth" type="button" class="btn btn-secondary btn-sm mx-1" @click="decreaseFontSize"><i
           class="bi bi-fonts">-</i></button>
 
-      <button type="button" class="btn btn-secondary btn-sm mx-1" @click="increaseFontSize"><i
+      <button v-if="!fullWidth" type="button" class="btn btn-secondary btn-sm mx-1" @click="increaseFontSize"><i
           class="bi bi-fonts">+</i></button>
-
 
       <button type="button" class="btn btn-danger btn-sm mx-1"
         :class="{ 'recording': isRecording, 'not-recording': !isRecording }" @click="toggleRecording">
         <i class="bi bi-mic"> mic</i>
       </button>
 
-
       <button v-if="recordedSomething" type="button" class="btn btn-success btn-sm mx-1" @click="playAudio">
         <i class="bi bi-play-circle"></i>
       </button>
 
-      <!-- <button type="button" class="btn btn-secondary btn-sm mx-1"><i class="bi bi-image"></i></button>
-
-            <button type="button" class="btn btn-secondary btn-sm mx-1" v-on:click="dalle" ><i class="bi bi-palette"></i></button> -->
-
-      <button type="button" class="btn btn-light btn-sm mx-1" @click="convertMarkdown"><i class="bi bi-file-earmark-font"> md</i></button>
+      <button v-if="!fullWidth" type="button" class="btn btn-light btn-sm mx-1" @click="convertMarkdown"><i class="bi bi-file-earmark-font"> md</i></button>
 
       <button type="button" class="btn btn-info btn-sm mx-2" v-on:click="gptComplete"><i class="bi bi-chat-right-dots"> gpt</i></button>
 
@@ -51,6 +44,7 @@
     </div>
   </div>
 </template>
+
   
 <script>
 

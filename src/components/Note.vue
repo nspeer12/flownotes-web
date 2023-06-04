@@ -1,8 +1,8 @@
 <template>
-    <div class="col">
+    <div class="col" >
         <div class="note card bg-dark my-2 py-2 px-3">
 
-        <div class="card-body">
+        <div class="card-body" data-aos="fade-in" data-aos-delay="500">
 
             <div class="markdown-preview" v-on:click="editNote(noteid)">
                 <div class="note-text" v-html="note.markdown ? note.markdown : note.text"></div>
