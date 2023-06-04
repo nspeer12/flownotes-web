@@ -119,7 +119,8 @@ export default {
     async saveNote(newNote) {
       console.log('Saves notes handler');
 
-      this.notes.push(newNote);
+      // add to the beggining of the array
+      this.notes.unshift(newNote);
 
       try {
         await apiService.saveNoteRequest(this.userid, newNote);
