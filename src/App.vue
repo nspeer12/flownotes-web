@@ -139,10 +139,13 @@ export default {
       }
     },
     async getTagNotes(tag) {
+      console.log('Get tag notes handler');
+
       try {
-        const data = await apiService.getTagNotesRequest(this.userid, tag);
-        this.notes = data.notes;
-        this.taglist = data.taglist;
+        const res = await apiService.getTagNotesRequest(tag, this.userid);
+        this.notes = res.data.notes;
+        console.log('notes:', data);
+        this.taglist = res.data.taglist;
       } catch (error) {
         console.log('Get tag notes error:', error);
       }

@@ -64,14 +64,15 @@ class ApiService {
     return axios.post(url, { noteId, pin: Boolean(pinBool) });
   }
 
-  async getTagNotesRequest(userId, tag) {
+  async getTagNotesRequest(tag, userId) {
     const url = this.baseUrl + '/notes/' + userId + '/hashtag/' + tag;
     return axios.get(url);
   }
 
   async getPinsRequest(userId) {
     const url = this.baseUrl + '/pin/' + userId;
-    return axios.get(url);
+    const data = axios.get(url).data;
+    return data;
   }
 
   async searchNotesRequest(userId, query) {
