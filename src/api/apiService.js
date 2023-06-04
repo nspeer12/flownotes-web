@@ -4,6 +4,7 @@ class ApiService {
   constructor() {
     // this.baseUrl = 'http://localhost:5003';
     this.baseUrl = process.env.API_URL;
+    console.log('API_URL:', this.baseUrl);
   }
 
   async loginRequest(email, password) {
