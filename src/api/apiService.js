@@ -21,7 +21,15 @@ class ApiService {
 
   async signupRequest(email, password) {
     const url = this.baseUrl + '/signup';
-    return axios.post(url, { email, password });
+    const response = await axios.post(url, { email, password });
+
+    // Ensure the response contains a userid
+    if (response.data && response.data.userid) {
+      return response.data;
+    } else {
+      throw new Error('Signup Error: Userid not found in response');
+    }
+
   }
 
   async getNotesRequest(userId, token) {
