@@ -1,7 +1,10 @@
 <template>
   <div class="compose card bg-dark my-2 px-3 py-4 pt-sm-5 pt-md-3"  :class="{ 'full-width': !fullWidth }">
+    <Context :context="this.context" />
     <div class="compose-box">
       <div id="markdown"></div>
+      <!-- <div id="context">{{  this.context }}</div> -->
+      
       <textarea id="compose-input" class="compose-input bg-dark" :style="{ fontSize: fontSize }" v-bind:rows="rows" v-on:input="updateData" v-on:keyup.shift.enter="saveNote" placeholder="What's on your mind?"></textarea>
     </div>
     <div class="image-preview">
@@ -18,23 +21,28 @@
       <button class="btn btn-info btn-sm mx-2" v-on:click="gptChat" v-if="visibleActions.gptChat"><i class="bi bi-chat-left-quote"> chat</i></button>
       <button class="btn btn-primary btn-sm mx-1" id="save" v-on:click="saveNote" v-if="visibleActions.saveNote"><i class="bi bi-sd-card"></i></button>
     </div>
+    
   </div>
 </template>
 
 <script>
 import Note from './Note.vue'
+import Context from './Context.vue'
 import { onMounted, ref } from 'vue'
 import { marked } from 'marked'
 import apiService from '../api/apiService'
 
 export default {
   components: {
-    Note
+    Note,
+    Context
   },
   data() {
     return {
       message: '',
       markdown: '',
+      //context: [{"role": "system", "content": "Hello, I am FlowNotes AI. I am here to help you to capture your ideas, express your creativity, and find mental clarity through notetaking."}],
+      context: [],
       rows: 6,
       imageUrl: '',
       isRecording: false,
@@ -49,7 +57,7 @@ export default {
         recordAudio: true,
         playAudio: true,
         convertMarkdown: true,
-        gptComplete: true,
+        gptComplete: false,
         gptChat: true,
         saveNote: true,
       },
@@ -96,13 +104,20 @@ export default {
       await this.gptRequest('gptCompleteRequest');
     },
     async gptChat() {
-      this.convertMarkdown();
-      // remove the message from the input field
-      document.getElementById('compose-input').value = '';
-      await this.gptRequest('gptChatRequest');
+      this.context.push({"role": "user", "content": this.message});
+
+      // reset message
+      this.message = ''
+      document.getElementById('compose-input').value = ' ';
+
+      const completion = await apiService.gptChatRequest(this.context);
+
+      this.context.push({"role": "system", "content": completion})
+
+      // await this.typeCompletion(completion);
     },
     async gptRequest(requestType) {
-      const completion = await apiService[requestType](this.message);
+      const completion = await apiService[requestType](this.context);
 
       await this.typeCompletion(completion);
 
