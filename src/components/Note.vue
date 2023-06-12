@@ -32,6 +32,12 @@
             </div>
 
 
+            <div v-if="note.audioUrl" class="audio-preview">
+                <audio controls>
+                    <source :src="note.audioUrl" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
 
             <p class="fa-2x text-muted" v-if="note.timestamp">
                 <i class="bi bi-clock me-2"></i>

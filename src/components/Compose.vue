@@ -5,7 +5,7 @@
       <div id="markdown"></div>
       <!-- <div id="context">{{  this.context }}</div> -->
       
-      <textarea id="compose-input" class="compose-input bg-dark" :style="{ fontSize: fontSize }" v-bind:rows="rows" v-on:input="updateData" v-on:keyup.shift.enter="saveNote" placeholder="What's on your mind?"></textarea>
+      <textarea id="compose-input" class="compose-input bg-dark" :style="{ fontSize: fontSize }" v-bind:rows="rows" v-on:input="updateData" v-on:keyup.enter="saveNote" placeholder="What's on your mind?"></textarea>
     </div>
     <div class="image-preview">
       <img v-bind:src="imageUrl ? imageUrl : ''" alt="" />
@@ -28,9 +28,11 @@
 <script>
 import Note from './Note.vue'
 import Context from './Context.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { marked } from 'marked'
 import apiService from '../api/apiService'
+import { storage } from '../api/firebaseService';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 export default {
   components: {
@@ -83,8 +85,10 @@ export default {
       let newNote = {
         userid: this.userid,
         text: this.message,
+        context: this.context,
         markdown: this.markdown,
         imageUrl: this.imageUrl,
+        audioUrl: this.audioUrl,
       };
 
       this.$emit('save-note', newNote);
@@ -186,7 +190,53 @@ export default {
       if (this.mediaRecorder) {
         this.mediaRecorder.stop();
         this.isRecording = false;
+        
+        // Upload the audio after recording is stopped
+        this.uploadAudio(this.userid, this.audioChunks)
+          .then(downloadURL => {
+            this.audioUrl = downloadURL;
+            this.recordedSomething = true;
+          })
+          .catch(error => {
+            console.error('Failed to upload audio:', error);
+          });
       }
+    },
+    async uploadAudio(userId, audioChunks) {
+      // Create a Blob from the audio chunks
+      var blob = new Blob(audioChunks);
+
+      // Create a unique filename for this audio
+      var timestamp = Date.now();
+      var filename = `${userId}_${timestamp}.m4a`;
+
+      // Create a storage reference
+      var storageRef = ref(storage, `recordings/${userId}/${filename}`);
+
+      // Upload the Blob
+      var uploadTask = uploadBytesResumable(storageRef, blob);
+
+      return new Promise((resolve, reject) => {
+        uploadTask.on('state_changed', 
+          (snapshot) => {
+            // Observe state change events such as progress, pause, and resume
+            var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Upload is ' + progress + '% done');
+          }, 
+          (error) => {
+            // Handle unsuccessful uploads
+            console.log('Upload failed:', error);
+            reject(error);
+          }, 
+          () => {
+            // Handle successful uploads on complete
+            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+              console.log('File available at', downloadURL);
+              resolve(downloadURL);
+            });
+          }
+        );
+      });
     },
     toggleRecording() {
       this.isRecording ? this.stopRecording() : this.startRecording();
