@@ -3,10 +3,10 @@
     <div class="login-content">
       <h2>Welcome back</h2>
       <div>
-        <input v-model="email" type="text" placeholder="Email" />
+        <input v-model="email" type="text" placeholder="Email" required />
       </div>
       <div>
-        <input v-model="password" type="password" placeholder="Password" />
+        <input v-model="password" type="password" placeholder="Password" required />
       </div>
       <button @click="login(email, password)">Login</button>
       <div class="signup-link pt-3">

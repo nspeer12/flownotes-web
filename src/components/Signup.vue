@@ -3,13 +3,13 @@
     <div class="signup-content">
       <h2>Welcome to Flownotes</h2>
       <div>
-        <input v-model="email" type="email" placeholder="Email" />
+        <input v-model="email" type="email" placeholder="Email" required />
       </div>
       <div>
-        <input v-model="password" type="password" placeholder="Password" />
+        <input v-model="password" type="password" placeholder="Password" required />
       </div>
       <div>
-        <input v-model="confirmPassword" type="password" placeholder="Confirm Password" />
+        <input v-model="confirmPassword" type="password" placeholder="Confirm Password" required />
       </div>
       <button @click="signup">Sign Up</button>
       <div class="text-center">
