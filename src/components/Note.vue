@@ -3,7 +3,7 @@
         <div class="note card bg-dark my-2 py-2 px-3">
 
         <div class="card-body" data-aos="fade-in" data-aos-delay="500">
-
+            <!-- {{ note }} -->
             <div class="markdown-preview" v-on:click="editNote(noteid)">
                 <div class="note-text" v-html="note.markdown ? note.markdown : note.text"></div>
             </div>
@@ -32,9 +32,9 @@
             </div>
 
 
-            <div v-if="note.audioUrl" class="audio-preview">
+            <div v-if="note.recordingurl" class="audio-preview">
                 <audio controls>
-                    <source :src="note.audioUrl" type="audio/mpeg">
+                    <source :src="note.recordingurl" type="audio/mpeg">
                     Your browser does not support the audio element.
                 </audio>
             </div>

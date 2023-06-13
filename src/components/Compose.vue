@@ -49,7 +49,8 @@ export default {
       imageUrl: '',
       isRecording: false,
       mediaRecorder: null,
-      audioUrl: null,
+      audioUrl: '',
+      recordingUrl: '',
       audioChunks: [],
       fontSize: '1.2em',
       recordedSomething: false,
@@ -88,7 +89,7 @@ export default {
         context: this.context,
         markdown: this.markdown,
         imageUrl: this.imageUrl,
-        audioUrl: this.audioUrl,
+        recordingurl: this.recordingUrl,
       };
 
       this.$emit('save-note', newNote);
@@ -177,7 +178,7 @@ export default {
           });
 
           this.mediaRecorder.addEventListener("stop", () => {
-            this.audioUrl = URL.createObjectURL(new Blob(this.audioChunks));
+            this.recordingUrl = URL.createObjectURL(new Blob(this.audioChunks));
             this.recordedSomething = true;
           });
 
@@ -194,7 +195,7 @@ export default {
         // Upload the audio after recording is stopped
         this.uploadAudio(this.userid, this.audioChunks)
           .then(downloadURL => {
-            this.audioUrl = downloadURL;
+            this.recordingUrl = downloadURL;
             this.recordedSomething = true;
           })
           .catch(error => {
@@ -242,8 +243,8 @@ export default {
       this.isRecording ? this.stopRecording() : this.startRecording();
     },
     playAudio() {
-      if (this.audioUrl) {
-        new Audio(this.audioUrl).play();
+      if (this.recordingUrl) {
+        new Audio(this.recordingUrl).play();
       }
     },
     increaseFontSize() {
