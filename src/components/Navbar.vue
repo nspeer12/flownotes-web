@@ -8,10 +8,10 @@
       
       <div class="d-flex flex-column flex-md-row align-items-center">
         <div class="my-2 my-md-0 d-none d-md-block">
-          <input v-model="query" class="form-control me-2 search-button" id="search" type="search" placeholder="coming soon :)" />
+          <input v-model="query" class="form-control me-2 search-button" id="search" type="search" placeholder="" />
         </div>
         <div class="my-2 my-md-0 mx-md-2 d-none d-md-block">
-          <button @click="search" class="btn btn-outline-success" type="button" disabled>Search</button>
+          <button @click="search" class="btn btn-outline-success" type="button" >Search</button>
         </div>
         <!-- <div class="my-2 my-md-0 mx-md-2">
           <router-link v-if="!loggedIn" to="/login" class="btn btn-primary d-md-none btn-sm">Login</router-link>
