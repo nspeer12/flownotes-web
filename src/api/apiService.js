@@ -75,7 +75,7 @@ class ApiService {
     return data;
   }
 
-  async searchNotesRequest(userId, query) {
+  async searchNotesRequest(query, userId) {
     const url = this.baseUrl + '/search/' + userId + '?query=' + encodeURIComponent(query);
     return axios.get(url);
   }
