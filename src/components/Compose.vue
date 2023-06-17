@@ -21,8 +21,11 @@
       <button class="btn btn-info btn-sm mx-2" v-on:click="gptChat" v-if="visibleActions.gptChat"><i class="bi bi-chat-left-quote"> chat</i></button>
       <button class="btn btn-primary btn-sm mx-1" id="save" v-on:click="saveNote" v-if="visibleActions.saveNote"><i class="bi bi-sd-card"></i></button>
     </div>
+    <Lotion :page="page" />
     
   </div>
+
+
 </template>
 
 <script>
@@ -33,6 +36,19 @@ import { marked } from 'marked'
 import apiService from '../api/apiService'
 import { storage } from '../api/firebaseService';
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { v4 as uuidv4 } from 'uuid'
+import { Lotion, registerBlock } from '@dashibase/lotion'
+
+const page = ref({
+  name: '🧴 Lotion',
+  blocks:[{
+    id: uuidv4(),
+    type: 'TEXT',
+    details: {
+      value: 'Hello, World!'
+    },
+  }],
+})
 
 export default {
   components: {

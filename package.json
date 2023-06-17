@@ -9,6 +9,7 @@
     "serve": "vite preview --port $FRONTEND_PORT"
   },
   "dependencies": {
+    "@dashibase/lotion": "^0.1.4",
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
