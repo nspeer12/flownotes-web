@@ -185,7 +185,7 @@ export default {
     } else {
       console.log('Not signed in');
       // push login to the router
-      this.$router.push({ name: 'Signup' });
+      this.$router.push({ name: 'Login' });
     }
   },
   beforeDestroy() {

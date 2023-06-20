@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     vue(),
     replace({
-      'process.env.API_URL': JSON.stringify(process.env.API_URL || 'http://localhost:5003'),
+      'process.env.API_URL': JSON.stringify(process.env.API_URL || 'http://localhost:5005'),
     })
   ],
   resolve: {
