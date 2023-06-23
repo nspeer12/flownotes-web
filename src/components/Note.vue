@@ -4,8 +4,12 @@
 
         <div class="card-body" data-aos="fade-in" data-aos-delay="500">
             <!-- {{ note }} -->
-            <div class="markdown-preview" v-on:click="editNote(noteid)">
+            <!-- <div class="markdown-preview" v-on:click="editNote(noteid)">
                 <div class="note-text" v-html="note.markdown ? note.markdown : note.text"></div>
+            </div> -->
+
+            <div class="html-preview">
+                <div class="note-text" v-html="note.html ? note.html : note.text"></div>
             </div>
             
             <!-- <p class="fs-6 note-text">{{ note.text }}</p> -->

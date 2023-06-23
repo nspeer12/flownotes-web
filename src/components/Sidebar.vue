@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar col-auto px-sm-2 pt-5 px-0 sticky-top">
+    <div class="sidebar px-sm-2 pt-5 px-5 sticky-top">
       <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
         <!-- Login/Logout Buttons -->
         <div class="mb-4">
@@ -79,4 +79,6 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="compose card bg-dark my-2 px-3 py-4 pt-sm-5 pt-md-3" :class="{ 'full-width': !fullWidth }">
+  <div class="compose card bg-dark px-2 pb-4" :class="{ 'full-width': !fullWidth }">
     <Context :context="this.context" />
     <div class="compose-box">
 
@@ -12,8 +12,8 @@
 
     <editor-content class="editor compose-input bg-dark" :editor="editor" />
 
-    <div class="row">
-      <div v-if="editor" class="btn-toolbar col-lg-6 mb-3" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="action-toolbar row">
+      <div v-if="editor" class="editor-toolbar col-lg-6" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group me-2" role="group" aria-label="Second group">
           <button class="btn btn-outline-light bi bi-type-bold" @click="editor.chain().focus().toggleBold().run()"
             :disabled="!editor.can().chain().focus().toggleBold().run()"
@@ -48,24 +48,24 @@
         </div>
       </div>
       <div class="btn-toolbar col-6 mb-3 justify-content-end" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="btn-group me-2" role="group" aria-label="First group">
-          <button class="btn btn-outline-secondary btn-sm" @click="toggleWidthHandler"
+        <div class="me-2" role="group" aria-label="First group">
+          <button class="btn-action btn btn-outline-secondary btn-sm" @click="toggleWidthHandler"
             v-if="visibleActions.toggleWidth"><i
               :class="fullWidth ? 'bi bi-arrow-bar-right' : 'bi bi-arrow-bar-left'"></i></button>
           <!-- <button class="btn btn-outline-secondary btn-sm" @click="decreaseFontSize"
             v-if="visibleActions.changeFontSize && !fullWidth"><i class="bi bi-fonts">-</i></button>
           <button class="btn btn-outline-secondary btn-sm" @click="increaseFontSize"
             v-if="visibleActions.changeFontSize && !fullWidth"><i class="bi bi-fonts">+</i></button> -->
-          <button class="btn btn-danger btn-sm"
+          <button class="btn-action btn btn-danger btn-sm"
             :class="{ 'recording': isRecording, 'not-recording': !isRecording }" @click="toggleRecording"
             v-if="visibleActions.recordAudio"><i class="bi bi-mic"> mic</i></button>
-          <button class="btn btn-success btn-sm" @click="playAudio"
+          <button class="btn-action btn btn-success btn-sm" @click="playAudio"
             v-if="recordedSomething && visibleActions.playAudio"><i class="bi bi-play-circle"></i></button>
-          <button class="btn btn-info btn-sm" v-on:click="gptComplete" v-if="visibleActions.gptComplete"><i
+          <button class="btn-action btn btn-info btn-sm" v-on:click="gptComplete" v-if="visibleActions.gptComplete"><i
               class="bi bi-chat-right-dots"> complete</i></button>
-          <button class="btn btn-info btn-sm" v-on:click="gptChat" v-if="visibleActions.gptChat"><i
+          <button class="btn-action btn btn-info btn-sm" v-on:click="gptChat" v-if="visibleActions.gptChat"><i
               class="bi bi-chat-left-quote"> chat</i></button>
-          <button class="btn btn-primary btn-sm" id="save" v-on:click="saveNote" v-if="visibleActions.saveNote"><i
+          <button class="btn-action btn btn-primary btn-sm" id="save" v-on:click="saveNote" v-if="visibleActions.saveNote"><i
               class="bi bi-sd-card"> save</i></button>
         </div>
       </div>
@@ -100,7 +100,8 @@ export default {
       message: '',
       text: '',
       markdown: '',
-      //context: [{"role": "system", "content": "Hello, I am FlowNotes AI. I am here to help you to capture your ideas, express your creativity, and find mental clarity through notetaking."}],
+      html: '',
+      //context: [{"role": "system", "content": "Hello, I am Flownotes AI. I am here to help you to capture your ideas, maximize your creativity, and find mental clarity through journaling."}],
       context: [],
       rows: 6,
       imageUrl: '',
@@ -139,17 +140,20 @@ export default {
       this.message = event.target.value;
     },
     saveNote() {
-      this.markdown = marked(this.message);
+      //this.markdown = marked(this.message);
 
       this.text = this.editor.getText();
+      this.html = this.editor.getHTML();
+
       // console.log(this.editor.getJSON());
-      console.log(this.text);
+      console.log(this.html);
 
       let newNote = {
         userid: this.userid,
         text: this.text,
         context: this.context,
         markdown: this.markdown,
+        html: this.html,
         imageUrl: this.imageUrl,
         recordingurl: this.recordingUrl,
       };
@@ -171,11 +175,13 @@ export default {
       await this.gptRequest('gptCompleteRequest');
     },
     async gptChat() {
-      this.context.push({ "role": "user", "content": this.message });
+
+      this.text = this.editor.getText();
+      this.context.push({ "role": "user", "content": this.text });
 
       // reset message
-      this.message = ''
-      document.getElementById('compose-input').value = ' ';
+      //this.text = ''
+      // document.getElementById('compose-input').value = ' ';
 
       const completion = await apiService.gptChatRequest(this.context);
 
@@ -327,7 +333,6 @@ export default {
 
   mounted() {
     this.editor = new Editor({
-      content: '<p>whats on your mind</p>',
       extensions: [
         StarterKit
       ],
@@ -339,7 +344,17 @@ export default {
   }
 }
 </script>
-<style scope>.compose-input {
+<style scope>
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.compose-input {
   width: 100%;
   color: #f8f9fa;
   border: none;
@@ -367,5 +382,17 @@ export default {
 }
 
 .editor {
-  min-height: 10vh;
-}</style>
+  min-height: 20vh;
+  margin-bottom: 5em;
+}
+
+.ProseMirror p {
+  margin: 1em 0.5em;
+  min-height: 14em;
+}
+
+.btn-action {
+  margin: 0 0.3em;
+}
+
+</style>

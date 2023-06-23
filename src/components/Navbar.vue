@@ -1,18 +1,17 @@
 <template>
-  <nav class="navbar navbar-dark bg-dark fixed-top mb-2">
+  <nav class="navbar navbar-dark fixed-top mb-5">
     <div class="container-fluid">
       <a class="navbar-brand">
-        {{ title }}
-        <span class="badge bg-info">beta</span>
+        <h4>{{ title }}  <span class="badge badge-pill bg-primary">beta</span></h4>
       </a>
       
       <div class="d-flex flex-column flex-md-row align-items-center">
-        <div class="my-2 my-md-0 d-none d-md-block">
+        <!-- <div class="my-2 my-md-0 d-none d-md-block">
           <input v-model="query" class="form-control me-2 search-button" id="search" type="search" placeholder="" />
         </div>
         <div class="my-2 my-md-0 mx-md-2 d-none d-md-block">
           <button @click="search" class="btn btn-outline-success" type="button" >Search</button>
-        </div>
+        </div> -->
         <!-- <div class="my-2 my-md-0 mx-md-2">
           <router-link v-if="!loggedIn" to="/login" class="btn btn-primary d-md-none btn-sm">Login</router-link>
           <router-link v-if="!loggedIn" to="/login" class="btn btn-primary d-none d-md-block">Login</router-link>

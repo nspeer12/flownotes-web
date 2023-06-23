@@ -6,15 +6,18 @@
 
     <div class="pt-5">
       <div class="row">
-        <div class="col-md-1 d-none d-md-block">
+        <div class="col-md-2 d-none d-md-block">
           <Sidebar @pins="getPins" @getTagNotes="getTagNotes" :taglist="taglist" 
                    :loggedIn="loggedIn" :userid="userid" @login="handleLogin" @logout="handleLogout" />
         </div>
-        <div class="col-12 col-md-11">
+        <div class="col-9">
           <router-view :userid="userid" :notes="notes" :fullWidth="fullWidth" :loggedIn="loggedIn" 
                        @save-note="saveNote" @toggle-width="toggleWidth" @pin-note="pinNote" 
                        @delete-note="deleteNote" @get-tag-notes="getTagNotes" @login="handleLogin" 
                        @user-logged-in="handleUserLoggedIn" @logout="handleLogout" @signup="handleSignup" />
+        </div>
+        <div class="col-1">
+          <!-- empty column -->
         </div>
       </div>
     </div>
@@ -202,7 +205,7 @@ export default {
   }
 }
 
-AOS.init();
+
 </script>
 
 <style>
