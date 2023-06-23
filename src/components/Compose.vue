@@ -158,6 +158,10 @@ export default {
         recordingurl: this.recordingUrl,
       };
 
+      this.editor.commands.clearContent();
+      this.text = '';
+      this.context = [];
+
       this.$emit('save-note', newNote);
 
       this.resetFields();
