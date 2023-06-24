@@ -385,12 +385,12 @@ export default {
 
 .editor {
   min-height: 20vh;
-  margin-bottom: 5em;
 }
 
 .ProseMirror p {
-  margin: 1em 0.5em;
-  min-height: 14em;
+  padding-top: 0.5em;
+  margin: 1em 1em;
+  min-height: 3em;
 }
 
 .btn-action {
