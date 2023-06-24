@@ -187,7 +187,11 @@ export default {
       this.getNotes();
     } else {
       console.log('Not signed in');
+
       // push login to the router
+      // this.$router.push({ name: 'Notebook' });
+
+      // force login
       this.$router.push({ name: 'Login' });
     }
   },

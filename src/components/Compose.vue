@@ -1,14 +1,6 @@
 <template>
   <div class="compose card bg-dark px-2 pb-4" :class="{ 'full-width': !fullWidth }">
     <Context :context="this.context" />
-    <div class="compose-box">
-
-      <!-- <div id="markdown"></div> -->
-      <!-- <div id="context">{{  this.context }}</div> -->
-
-      <!-- <textarea id="compose-input" class="compose-input bg-dark" :style="{ fontSize: fontSize }" v-bind:rows="rows"
-        v-on:input="updateData" placeholder="What's on your mind?"></textarea> -->
-    </div>
 
     <editor-content class="editor compose-input bg-dark" :editor="editor" />
 
@@ -85,6 +77,8 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 // import { ref } from 'vue';
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import StarterKit from '@tiptap/starter-kit'
+import Focus from '@tiptap/extension-focus'
+import Placeholder from '@tiptap/extension-placeholder'
 
 import { v4 as uuidv4 } from 'uuid'
 import { Lotion, registerBlock } from '@dashibase/lotion'
@@ -97,20 +91,18 @@ export default {
   },
   data() {
     return {
-      message: '',
       text: '',
       markdown: '',
       html: '',
       //context: [{"role": "system", "content": "Hello, I am Flownotes AI. I am here to help you to capture your ideas, maximize your creativity, and find mental clarity through journaling."}],
       context: [],
-      rows: 6,
       imageUrl: '',
       isRecording: false,
       mediaRecorder: null,
       audioUrl: '',
       recordingUrl: '',
       audioChunks: [],
-      fontSize: '1.2em',
+      fontSize: '1.4em',
       recordedSomething: false,
       editor: null,
       visibleActions: {
@@ -135,13 +127,7 @@ export default {
     },
   },
   methods: {
-    updateData(event) {
-      this.rows = Math.max(6, event.target.value.split('\n').length);
-      this.message = event.target.value;
-    },
     saveNote() {
-      //this.markdown = marked(this.message);
-
       this.text = this.editor.getText();
       this.html = this.editor.getHTML();
 
@@ -167,7 +153,6 @@ export default {
       this.resetFields();
     },
     resetFields() {
-      this.message = '';
       this.imageUrl = '';
       this.markdown = '';
       // document.getElementById('compose-input').value = '';
@@ -338,8 +323,16 @@ export default {
   mounted() {
     this.editor = new Editor({
       extensions: [
-        StarterKit
+        StarterKit,
+        Focus.configure({
+          classname: 'has-focus',
+          mode: 'all',
+        }),
+        Placeholder.configure({
+          placeholder: "What's on your mind?",
+        })
       ],
+      autofocus: true,
     })
   },
 
@@ -350,6 +343,11 @@ export default {
 </script>
 <style scope>
 
+/* .has-focus {
+  border-radius: 3px;
+  box-shadow: 0 0 0 3px #68cef8;
+} */
+
 .ProseMirror p.is-editor-empty:first-child::before {
   color: #adb5bd;
   content: attr(data-placeholder);
@@ -358,12 +356,12 @@ export default {
   pointer-events: none;
 }
 
-.compose-input {
+/* .compose-input {
   width: 100%;
   color: #f8f9fa;
   border: none;
   outline: none;
-}
+} */
 
 .actions {
   display: flex;
