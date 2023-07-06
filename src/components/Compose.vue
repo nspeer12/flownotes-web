@@ -1,5 +1,5 @@
 <template>
-  <div class="compose card bg-dark px-1 py-1" :class="{ 'full-width': !fullWidth }">
+  <div class="compose card bg-dark px-2 py-2" :class="{ 'full-width': !fullWidth }">
     <Context :context="this.context" />
 
     <editor-content class="editor compose-input bg-dark" :editor="editor" />
@@ -39,7 +39,7 @@
             :hidden="!editor.can().chain().focus().redo().run()"></button>
         </div>
       </div>
-      <div class="btn-toolbar col-6 mb-3 justify-content-end" role="toolbar" aria-label="Toolbar with button groups">
+      <div class="btn-toolbar col-6 justify-content-end" role="toolbar" aria-label="Toolbar with button groups">
         <div class="me-2" role="group">
           <button class="btn-action btn btn-outline-secondary btn-sm" @click="toggleWidthHandler"
             v-if="visibleActions.toggleWidth"><i
@@ -287,11 +287,15 @@ export default {
 <style scope>
 
 .ProseMirror p.is-editor-empty:first-child::before {
-  color: #d4dde5;
+  color: #cfcdcd;
   content: attr(data-placeholder);
   float: left;
   height: 0;
   pointer-events: none;
+}
+
+.ProseMirror:focus {
+    outline: none;
 }
 
 .actions {
@@ -335,5 +339,7 @@ export default {
 .btn-action {
   margin: 0 0.3em;
 }
+
+
 
 </style>

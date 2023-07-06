@@ -195,10 +195,10 @@ export default {
       console.log('Not signed in');
 
       // push login to the router (dev mode)
-      //this.$router.push({ name: 'Notebook' });
+      this.$router.push({ name: 'Notebook' });
 
       // force login
-      this.$router.push({ name: 'Login' });
+      //this.$router.push({ name: 'Login' });
     }
   },
   beforeDestroy() {
