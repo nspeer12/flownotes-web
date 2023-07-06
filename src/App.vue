@@ -135,9 +135,16 @@ export default {
 
       try {
         await apiService.saveNoteRequest(this.userid, newNote);
-        // this.getNotes();
+        
       } catch (error) {
         console.log('Save note error:', error);
+      } finally {
+        await this.getNotes();
+        // wait 3 seconds
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        // remove the first element
+        this.notes.shift();
+        
       }
     },
     async searchNotes(query) {
@@ -189,10 +196,10 @@ export default {
       console.log('Not signed in');
 
       // push login to the router
-      // this.$router.push({ name: 'Notebook' });
+      this.$router.push({ name: 'Notebook' });
 
       // force login
-      this.$router.push({ name: 'Login' });
+      // this.$router.push({ name: 'Login' });
     }
   },
   beforeDestroy() {
