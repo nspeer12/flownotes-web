@@ -140,11 +140,6 @@ export default {
         console.log('Save note error:', error);
       } finally {
         await this.getNotes();
-        // wait 3 seconds
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        // remove the first element
-        this.notes.shift();
-        
       }
     },
     async searchNotes(query) {
