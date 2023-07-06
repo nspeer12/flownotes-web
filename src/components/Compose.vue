@@ -1,5 +1,5 @@
 <template>
-  <div class="compose card bg-dark px-2 pb-4" :class="{ 'full-width': !fullWidth }">
+  <div class="compose card bg-dark px-1 py-1" :class="{ 'full-width': !fullWidth }">
     <Context :context="this.context" />
 
     <editor-content class="editor compose-input bg-dark" :editor="editor" />
@@ -40,15 +40,11 @@
         </div>
       </div>
       <div class="btn-toolbar col-6 mb-3 justify-content-end" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="me-2" role="group" aria-label="First group">
+        <div class="me-2" role="group">
           <button class="btn-action btn btn-outline-secondary btn-sm" @click="toggleWidthHandler"
             v-if="visibleActions.toggleWidth"><i
               :class="fullWidth ? 'bi bi-arrow-bar-right' : 'bi bi-arrow-bar-left'"></i></button>
-          <!-- <button class="btn btn-outline-secondary btn-sm" @click="decreaseFontSize"
-            v-if="visibleActions.changeFontSize && !fullWidth"><i class="bi bi-fonts">-</i></button>
-          <button class="btn btn-outline-secondary btn-sm" @click="increaseFontSize"
-            v-if="visibleActions.changeFontSize && !fullWidth"><i class="bi bi-fonts">+</i></button> -->
-          <button class="btn-action btn btn-danger btn-sm"
+          <button class="btn-action btn btn-sm mic-btn"
             :class="{ 'recording': isRecording, 'not-recording': !isRecording }" @click="toggleRecording"
             v-if="visibleActions.recordAudio"><i class="bi bi-mic"> mic</i></button>
           <button class="btn-action btn btn-success btn-sm" @click="playAudio"
@@ -80,9 +76,6 @@ import StarterKit from '@tiptap/starter-kit'
 import Focus from '@tiptap/extension-focus'
 import Placeholder from '@tiptap/extension-placeholder'
 
-import { v4 as uuidv4 } from 'uuid'
-import { Lotion, registerBlock } from '@dashibase/lotion'
-
 export default {
   components: {
     Note,
@@ -102,12 +95,10 @@ export default {
       audioUrl: '',
       recordingUrl: '',
       audioChunks: [],
-      fontSize: '1.4em',
       recordedSomething: false,
       editor: null,
       visibleActions: {
         toggleWidth: true,
-        changeFontSize: true,
         recordAudio: true,
         playAudio: true,
         convertMarkdown: true,
@@ -131,9 +122,6 @@ export default {
       this.text = this.editor.getText();
       this.html = this.editor.getHTML();
 
-      // console.log(this.editor.getJSON());
-      console.log(this.html);
-
       let newNote = {
         userid: this.userid,
         text: this.text,
@@ -155,7 +143,9 @@ export default {
     resetFields() {
       this.imageUrl = '';
       this.markdown = '';
-      // document.getElementById('compose-input').value = '';
+      this.context = [];
+      this.text = '';
+      this.html = '';
     },
     toggleWidthHandler() {
       this.$emit('toggleWidth');
@@ -164,26 +154,16 @@ export default {
       await this.gptRequest('gptCompleteRequest');
     },
     async gptChat() {
-
       this.text = this.editor.getText();
       this.context.push({ "role": "user", "content": this.text });
-
-      // reset message
-      //this.text = ''
-      // document.getElementById('compose-input').value = ' ';
-
       const completion = await apiService.gptChatRequest(this.context);
+      this.context.push({ "role": "assistant", "content": completion })
 
-      this.context.push({ "role": "system", "content": completion })
-
-      // await this.typeCompletion(completion);
     },
     async gptRequest(requestType) {
       const completion = await apiService[requestType](this.context);
-
       await this.typeCompletion(completion);
 
-      // this.rows = Math.max(6, composeInput.value.split('\n').length);
     },
     async typeCompletion(completion) {
       const words = completion.split(' ');
@@ -191,34 +171,6 @@ export default {
         await new Promise(resolve => setTimeout(resolve, 100));
         this.markdown += word + ' ';
       }
-    },
-    convertMarkdown() {
-      this.markdown = marked(this.message);
-      document.getElementById('markdown').innerHTML = this.markdown;
-    },
-    renderMarkdown() {
-      document.getElementById('markdown').innerHTML = marked(this.markdown);
-    },
-    dalle() {
-      const prompt = encodeURIComponent(this.message);
-      const endpoint = `${this.apiUrl}/dalle/${this.userid}query=${prompt}`;
-
-      fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.dalle) {
-            this.imageUrl = data.dalle;
-          }
-        });
-    },
-    removeImg() {
-      this.imageUrl = '';
     },
     startRecording() {
       if (!window.MediaRecorder) {
@@ -303,16 +255,7 @@ export default {
       if (this.recordingUrl) {
         new Audio(this.recordingUrl).play();
       }
-    },
-    increaseFontSize() {
-      this.fontSize = (parseFloat(this.fontSize) + 0.1) + 'em';
-    },
-    decreaseFontSize() {
-      let currentSize = parseFloat(this.fontSize);
-      if (currentSize > 0.1) {
-        this.fontSize = (currentSize - 0.1) + 'em';
-      }
-    },
+    }
   },
   watch: {
     markdown: function (val) {
@@ -343,25 +286,13 @@ export default {
 </script>
 <style scope>
 
-/* .has-focus {
-  border-radius: 3px;
-  box-shadow: 0 0 0 3px #68cef8;
-} */
-
 .ProseMirror p.is-editor-empty:first-child::before {
-  color: #adb5bd;
+  color: #d4dde5;
   content: attr(data-placeholder);
   float: left;
   height: 0;
   pointer-events: none;
 }
-
-/* .compose-input {
-  width: 100%;
-  color: #f8f9fa;
-  border: none;
-  outline: none;
-} */
 
 .actions {
   display: flex;
@@ -369,8 +300,16 @@ export default {
   align-items: center;
 }
 
+.mic-btn {
+  color: #f8f9fa;
+}
+
 .recording {
   background-color: red;
+}
+
+.not-recording {
+  background-color: rgb(13, 124, 81);
 }
 
 .compose {

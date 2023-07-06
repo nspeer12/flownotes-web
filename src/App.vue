@@ -30,7 +30,6 @@ import Navbar from './components/Navbar.vue'
 import Sidebar from './components/Sidebar.vue'
 import Notebook from './components/Notebook.vue'
 import apiService from './api/apiService'
-import AOS from 'aos';
 
 export default {
   name: 'App',
@@ -130,7 +129,6 @@ export default {
     async saveNote(newNote) {
       console.log('Saves notes handler');
 
-      // add to the beggining of the array
       this.notes.unshift(newNote);
 
       try {
@@ -139,7 +137,9 @@ export default {
       } catch (error) {
         console.log('Save note error:', error);
       } finally {
-        await this.getNotes();
+        // sleep 3 seconds and then get notes
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        this.getNotes();
       }
     },
     async searchNotes(query) {
@@ -159,6 +159,10 @@ export default {
         this.notes = res.data.notes;
         console.log('notes:', data);
         this.taglist = res.data.taglist;
+
+        // filter out tags that are blank, null, or contain only one letter
+        this.taglist = this.taglist.filter(tag => tag && tag.length > 1);
+
       } catch (error) {
         console.log('Get tag notes error:', error);
       }
@@ -190,8 +194,8 @@ export default {
     } else {
       console.log('Not signed in');
 
-      // push login to the router
-      // this.$router.push({ name: 'Notebook' });
+      // push login to the router (dev mode)
+      //this.$router.push({ name: 'Notebook' });
 
       // force login
       this.$router.push({ name: 'Login' });

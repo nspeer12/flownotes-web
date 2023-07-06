@@ -1,29 +1,39 @@
-# flownotes
+# Flownotes Web Client
 
-This template should help get you started developing with Vue 3 in Vite.
+Flownotes-web is a simple, yet efficient note-taking application designed to improve your productivity. It harnesses the power of Large Language Models (LLMs) to provide advanced features that standard note-taking applications don't offer.
 
-## Recommended IDE Setup
+## Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+- Quick note taking with intuitive UI
+- Powered by LLMs for advanced note organization and suggestions
+- Write notes using plain text, markdown, or html
+- Audio recording and dictation
 
-## Customize configuration
+## Prerequisites
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- [Node.js](https://nodejs.org/) (v14 or newer)
+- [Vue.js](https://vuejs.org/) (v3 or newer)
+- [Vite](https://vitejs.dev/) (v2 or newer)
 
-## Project Setup
+## Environment Variables
 
-```sh
-npm install
-```
+To run this project, you will need to add the following environment variables to your .env file:
 
-### Compile and Hot-Reload for Development
+- `API_URL` - Backend API is `api.flownotes.io` by default
+- `OPENAI_API_KEY` - Your OpenAI key
 
-```sh
-npm run dev
-```
+## Installation
 
-### Compile and Minify for Production
+First, clone the repository:
 
-```sh
-npm run build
-```
+`git clone https://github.com/nspeer12/flownotes-web`
+
+# Running the Application
+
+Launch vite dev server:
+
+`npm run dev`
+
+Or, to compile the code, run `npm run build` and serve the files in the `dist` folder
+
+
