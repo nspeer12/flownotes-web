@@ -23,9 +23,9 @@
                 <span @click="getTagNotes(tag)" v-for="tag in note.autotags" :key="tag" class="badge bg-primary me-2">{{ tag }}</span>
             </div>
 
-            <div class="tags mb-3">
+            <!-- <div class="tags mb-3">
                 <span v-for="keyword in note.keywords" :key="keyword" class="badge bg-info me-2">{{ keyword }}</span>
-            </div>
+            </div> -->
 
             <div v-if="'tokens' in note" class="tags mb-3">
                 <span v-for="token in note.tokens" :key="token" class="badge bg-secondary me-2">{{ token }}</span>
