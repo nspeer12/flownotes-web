@@ -27,9 +27,9 @@
                 <span v-for="keyword in note.keywords" :key="keyword" class="badge bg-info me-2">{{ keyword }}</span>
             </div> -->
 
-            <div v-if="'tokens' in note" class="tags mb-3">
+            <!-- <div v-if="'tokens' in note" class="tags mb-3">
                 <span v-for="token in note.tokens" :key="token" class="badge bg-secondary me-2">{{ token }}</span>
-            </div>
+            </div> -->
 
             <div class="tags mb-3">
                 <span v-for="category in note.categories" :key="category" class="badge bg-secondary me-2">{{ category }}</span>
